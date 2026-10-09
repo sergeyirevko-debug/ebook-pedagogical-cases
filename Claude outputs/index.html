@@ -1,0 +1,1235 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-book · Педагогикалық жағдаяттар банкі</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1f56c3; --blue-d:#0d2f6e; --blue-dd:#0a2353; --blue-l:#e9f0fd; --blue-ll:#f4f7fd;
+  --violet:#6b4de6; --teal:#14a39a;
+  --ink:#16223a; --ink2:#4a5874; --ink3:#7d8aa3; --line:#e1e7f2;
+  --bg:#f3f6fb; --card:#ffffff;
+  --good:#16a36a; --good-bg:#e5f7ee; --risky:#d9822b; --risky-bg:#fdf1e3; --weak:#c94545; --weak-bg:#fbe8e8;
+  --r:16px; --shadow:0 2px 6px rgba(16,40,90,.05),0 8px 24px rgba(16,40,90,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+textarea,input,select{font:inherit;color:inherit}
+h1,h2,h3,h4{margin:0;line-height:1.2;color:var(--blue-dd)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.ico{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* header */
+.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.bar1{display:flex;align-items:center;gap:22px;height:64px}
+.bar2{border-top:1px solid var(--line)}
+.bar2 .nav{height:46px;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:40px;height:40px;border-radius:10px;background:var(--blue-d);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;letter-spacing:-.5px;flex:none}
+.brand small{display:block;font-size:11.5px;line-height:1.3;color:var(--blue-d);font-weight:700;text-transform:uppercase;max-width:300px}
+.nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav a{padding:8px 10px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--ink2);white-space:nowrap}
+.nav a:hover{background:var(--blue-ll);color:var(--blue)}
+.nav a.on{color:var(--blue);background:var(--blue-l)}
+.tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+.lang{display:flex;background:var(--blue-ll);border:1px solid var(--line);border-radius:999px;padding:3px}
+.lang button{padding:5px 11px;border-radius:999px;font-size:12.5px;font-weight:700;color:var(--ink3)}
+.lang button.on{background:var(--blue);color:#fff}
+.iconbtn{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:var(--ink2)}
+.iconbtn:hover{background:var(--blue-ll);color:var(--blue)}
+.proto{font-size:11px;font-weight:600;color:var(--risky);background:var(--risky-bg);padding:4px 8px;border-radius:6px;white-space:nowrap}
+
+main{padding:28px 0 60px;min-height:70vh}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.pad{padding:22px}
+.sec-title{font-size:20px;font-weight:700;margin:34px 0 14px;color:var(--blue-dd)}
+.muted{color:var(--ink3)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:12px;font-weight:600;font-size:14.5px;transition:.15s}
+.btn-p{background:var(--blue);color:#fff}.btn-p:hover{background:#1846a6}
+.btn-v{background:var(--violet);color:#fff}.btn-v:hover{background:#5a3dd1}
+.btn-l{background:var(--blue-l);color:var(--blue)}.btn-l:hover{background:#dbe6fb}
+.btn-o{border:1px solid var(--line);background:#fff;color:var(--ink2)}.btn-o:hover{border-color:var(--blue);color:var(--blue)}
+.btn-block{width:100%}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--blue-l);color:var(--blue)}
+.lvl-low{background:var(--good-bg);color:var(--good)}.lvl-med{background:var(--risky-bg);color:var(--risky)}.lvl-high{background:var(--weak-bg);color:var(--weak)}
+.oc-good{background:var(--good-bg);color:var(--good)}.oc-risky{background:var(--risky-bg);color:var(--risky)}.oc-weak{background:var(--weak-bg);color:var(--weak)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.15fr 1fr;overflow:hidden;border-radius:22px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow)}
+.hero-l{padding:44px 40px}
+.hero h1{font-size:36px;font-weight:800;letter-spacing:-.5px}
+.hero h1 span{display:block;color:var(--blue)}
+.hero p.lead{font-size:18px;color:var(--ink2);margin:14px 0 24px}
+.search{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:0 14px;background:#fff;max-width:440px}
+.search input{border:0;outline:0;padding:13px 0;flex:1;background:transparent;min-width:0}
+.search:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-l)}
+.hero-r{position:relative;min-height:340px;background:linear-gradient(160deg,#cfe0fb 0%,#9cc0f2 45%,#3f78d6 100%)}
+.hero-r svg{position:absolute;inset:0;width:100%;height:100%}
+.slogan{position:absolute;right:26px;top:26px;max-width:210px;color:#fff;font-weight:700;font-size:20px;line-height:1.25;text-transform:uppercase;text-shadow:0 2px 12px rgba(10,35,83,.35)}
+.cats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-top:22px}
+.cat{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:14px;background:var(--blue-ll);border:1px solid var(--line);font-size:12.5px;font-weight:600;text-align:center;color:var(--ink2);transition:.15s}
+.cat:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px)}
+.cat .ci{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#fff;color:var(--teal)}
+.cat .ci .ico{width:24px;height:24px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:22px;border-top:1px solid var(--line)}
+.stat{padding:18px 18px 4px 0}
+.stat b{display:block;font-size:26px;color:var(--blue-dd);font-weight:800}
+.stat span{font-size:13px;color:var(--ink3)}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* case card */
+.ccard{display:flex;gap:14px;padding:14px;align-items:center;transition:.15s}
+.ccard:hover{border-color:#bcd0f5;transform:translateY(-2px)}
+.thumb{width:86px;height:66px;border-radius:12px;flex:none;display:grid;place-items:center;color:#fff;position:relative;overflow:hidden}
+.thumb .ico{width:30px;height:30px;stroke-width:1.6}
+.ccard .code{font-size:12px;font-weight:700;color:var(--ink3)}
+.ccard h4{font-size:15.5px;margin:2px 0 6px}
+.ccard .row{display:flex;gap:6px;flex-wrap:wrap}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.step{padding:16px}
+.step .n{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;margin-bottom:10px}
+.step h4{font-size:14.5px;margin-bottom:4px}
+.step p{font-size:12.5px;color:var(--ink3);margin:0}
+
+/* catalog */
+.catalog{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
+.side{padding:10px;position:sticky;top:130px}
+.side h4{font-size:14px;padding:8px 10px 10px}
+.side a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:13.5px;color:var(--ink2)}
+.side a .ico{width:18px;height:18px;color:var(--teal)}
+.side a em{margin-left:auto;font-style:normal;font-size:12px;color:var(--ink3)}
+.side a:hover{background:var(--blue-ll)}
+.side a.on{background:var(--blue-l);color:var(--blue);font-weight:600}
+.list{display:flex;flex-direction:column;gap:12px}
+.filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.filters .search{flex:1;max-width:none}
+.filters select{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+
+/* case page */
+.crumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);margin-bottom:14px}
+.crumb a:hover{color:var(--blue)}
+.case-head{display:grid;grid-template-columns:1fr 300px;gap:20px;padding:24px}
+.case-head .code{font-weight:700;color:var(--ink3)}
+.case-head h1{font-size:28px;margin:4px 0 12px}
+.case-img{border-radius:14px;min-height:170px;display:grid;place-items:center;color:#fff}
+.case-img .ico{width:60px;height:60px;stroke-width:1.3;opacity:.9}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 24px;overflow-x:auto}
+.tabs a{padding:12px 14px;font-weight:600;font-size:14px;color:var(--ink3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs a.on{color:var(--blue);border-color:var(--blue)}
+.tabs a .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--good);margin-left:6px;vertical-align:middle}
+.case-body{display:grid;grid-template-columns:1fr 300px;gap:20px;padding:24px}
+.case-body h3{font-size:18px;margin-bottom:10px}
+.case-text{font-size:16px;line-height:1.65;color:var(--ink)}
+.actions{display:flex;flex-direction:column;gap:10px}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:var(--ink2)}
+textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:76px;resize:vertical;background:#fff;outline:0}
+textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-l)}
+.savehint{font-size:12.5px;color:var(--good);height:18px}
+.opt{display:block;width:100%;text-align:left;padding:16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;margin-bottom:10px;transition:.15s}
+.opt:hover{border-color:#a9c2f2}
+.opt.sel{border-color:var(--blue);background:var(--blue-ll)}
+.opt .lt{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--blue-l);color:var(--blue);font-weight:700;font-size:13px;margin-right:10px}
+.opt.sel .lt{background:var(--blue);color:#fff}
+.cons{margin-top:12px;padding:12px 14px;border-radius:10px;background:#fff;border:1px dashed var(--line);font-size:14px;color:var(--ink2)}
+.cons b{display:flex;align-items:center;gap:8px;margin-bottom:4px;color:var(--ink)}
+.pchips{display:flex;flex-wrap:wrap;gap:8px}
+.pchip{padding:7px 12px;border-radius:999px;border:1px solid var(--line);font-size:13px;background:#fff;color:var(--ink2)}
+.pchip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.gate{text-align:center;padding:40px 20px}
+.gate .ico{width:44px;height:44px;color:var(--blue);margin-bottom:10px}
+.expert{border-left:4px solid var(--teal);background:#effaf8;padding:16px 18px;border-radius:0 12px 12px 0;font-size:15.5px;line-height:1.65}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.compare .box{padding:14px;border-radius:12px;background:var(--blue-ll);font-size:14px}
+.compare .box h4{font-size:13px;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+
+/* chat */
+.chat-wrap{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+.chat{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:520px;overflow:hidden}
+.chat-h{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.bot{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#3b74e0,#0d2f6e);display:grid;place-items:center;color:#fff;flex:none}
+.bot .ico{width:24px;height:24px}
+.chat-h b{display:block;color:var(--blue-dd)}
+.chat-h small{color:var(--ink3)}
+.msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;background:var(--blue-ll)}
+.msg{display:flex;gap:10px;max-width:86%}
+.msg .bot{width:32px;height:32px}.msg .bot .ico{width:18px;height:18px}
+.bubble{padding:12px 14px;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:14.5px}
+.bubble ol{margin:6px 0 0;padding-left:20px}
+.bubble .meta{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:11.5px;color:var(--ink3)}
+.bubble .meta button{color:var(--ink3);font-size:11.5px;text-decoration:underline}
+.bubble .meta button:hover{color:var(--weak)}
+.msg.me{align-self:flex-end}
+.msg.me .bubble{background:var(--blue);color:#fff;border-color:var(--blue)}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.quick button{padding:7px 12px;border-radius:999px;background:var(--blue-l);color:var(--blue);font-size:13px;font-weight:600}
+.quick button:hover{background:#d7e3fa}
+.compose{display:flex;gap:10px;padding:12px;border-top:1px solid var(--line);background:#fff}
+.compose input{flex:1;border:1px solid var(--line);border-radius:999px;padding:12px 16px;outline:0;min-width:0}
+.compose input:focus{border-color:var(--blue)}
+.send{width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;flex:none}
+.typing{display:flex;gap:4px;padding:6px 2px}.typing i{width:7px;height:7px;border-radius:50%;background:var(--ink3);animation:b 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,60%,100%{opacity:.25}30%{opacity:1}}
+.feat{list-style:none;padding:0;margin:14px 0}
+.feat li{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;background:var(--blue-ll);margin-bottom:8px;font-size:13.5px}
+.feat li .ico{color:var(--blue)}
+.ai-promo{background:linear-gradient(160deg,#0d2f6e,#1f56c3);color:#fff;padding:22px;border-radius:var(--r)}
+.ai-promo h3{color:#fff;font-size:20px;margin:12px 0 4px}
+.ai-promo .feat li{background:rgba(255,255,255,.95);color:var(--ink)}
+
+/* video */
+.player{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:16/9;display:grid;place-items:center;color:#fff}
+.play{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--blue);display:grid;place-items:center;box-shadow:0 6px 30px rgba(0,0,0,.25)}
+.play .ico{width:30px;height:30px;fill:currentColor}
+.pbar{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(transparent,rgba(0,0,0,.55));font-size:12.5px}
+.pbar .track{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.35)}
+.soon{position:absolute;top:12px;left:12px;font-size:12px;font-weight:600;background:rgba(10,35,83,.6);padding:5px 10px;border-radius:8px}
+.vlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.vitem{overflow:hidden}
+.vitem .player{border-radius:0;aspect-ratio:16/10}
+.vitem .play{width:46px;height:46px}.vitem .play .ico{width:20px;height:20px}
+.vitem .t{padding:12px 14px}
+.qlist{margin:0;padding-left:20px}.qlist li{margin-bottom:8px}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink3);font-weight:600}
+.checkrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#fff}
+.checkrow input{width:18px;height:18px;accent-color:var(--blue)}
+.formrow{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.formrow select,.formrow input{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--blue-dd);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;z-index:99;box-shadow:var(--shadow);animation:fi .2s}
+@keyframes fi{from{opacity:0;transform:translate(-50%,8px)}}
+
+.about-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.about-cards .card h3{display:flex;gap:12px;align-items:center;font-size:19px;margin-bottom:10px}
+.about-cards .card h3 .ico{width:30px;height:30px;color:var(--blue)}
+.ticks{list-style:none;padding:0;margin:0}
+.ticks li{display:flex;gap:10px;margin-bottom:9px;font-size:14px}
+.ticks li .ico{color:var(--teal);flex:none;margin-top:1px}
+.access{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.access .card{text-align:center;padding:20px 12px;font-size:13.5px;color:var(--ink2)}
+.access .ai{width:54px;height:54px;border-radius:50%;background:var(--blue-l);color:var(--blue);display:grid;place-items:center;margin:0 auto 10px}
+.access .ai .ico{width:26px;height:26px}
+.band{margin-top:30px;background:var(--blue-dd);color:#dfe8fb;border-radius:var(--r);display:grid;grid-template-columns:repeat(4,1fr)}
+.band div{display:flex;gap:12px;align-items:center;padding:20px;font-size:13.5px;border-right:1px solid rgba(255,255,255,.12)}
+.band div:last-child{border:0}
+.band .ico{width:30px;height:30px;color:#fff}
+
+footer{border-top:1px solid var(--line);background:#fff;padding:18px 0;font-size:12.5px;color:var(--ink3)}
+.tabbar{display:none}
+
+@media (max-width:1080px){
+  .nav a{padding:8px 7px;font-size:12.5px}
+  .steps{grid-template-columns:repeat(3,1fr)}
+  .access{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:860px){
+  .bar2,.proto{display:none}
+  .brand small{font-size:10px;max-width:180px}
+  .case-img{min-height:90px}
+  .case-img .ico{width:40px;height:40px}
+  .bubble .meta{flex-direction:column;gap:2px}
+  #newchat{white-space:nowrap}
+  .hero{grid-template-columns:1fr}
+  .hero-r{min-height:200px}
+  .hero-l{padding:28px 22px}
+  .hero h1{font-size:28px}
+  .cats{grid-template-columns:repeat(3,1fr)}
+  .stats{grid-template-columns:1fr 1fr}
+  .grid3,.grid2,.about-cards{grid-template-columns:1fr}
+  .catalog,.chat-wrap,.case-head,.case-body{grid-template-columns:1fr}
+  .side{position:static}
+  .chat-side{display:none}
+  .chat{height:calc(100vh - 210px)}
+  .band{grid-template-columns:1fr 1fr}
+  .compare{grid-template-columns:1fr}
+  main{padding-bottom:90px}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:40;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--ink3);padding:4px 0}
+  .tabbar a.on{color:var(--blue)}
+  footer{display:none}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .steps,.access{grid-template-columns:1fr 1fr}
+  .case-head,.case-body{padding:18px}
+  .tabs{margin:0 18px}
+  .ccard .thumb{width:64px;height:56px}
+  .band{grid-template-columns:1fr}
+}
+
+.quicklinks{display:none;gap:10px;flex-direction:column;margin-bottom:16px}
+.quicklinks a{display:flex;align-items:center;gap:12px;padding:14px 16px;font-weight:600;color:var(--ink2)}
+.quicklinks a .ico:first-child{color:var(--blue)}
+.quicklinks a span{flex:1}
+@media (max-width:860px){.quicklinks{display:flex}}
+@media (max-width:380px){.brand small{display:none}}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* Строки интерфейса / Интерфейс жолдары */
+const UI = {
+  ru: {
+    uni: 'Восточно-Казахстанский университет имени Сарсена Аманжолова',
+    nav_home: 'Главная', nav_about: 'О проекте', nav_catalog: 'Каталог кейсов', nav_video: 'Ситуационные видео',
+    nav_ai: 'AI-ассистент', nav_materials: 'Методические материалы', nav_teacher: 'Режим преподавателя',
+    tab_home: 'Главная', tab_cases: 'Кейсы', tab_ai: 'AI', tab_video: 'Видео', tab_profile: 'Профиль',
+    hero_title: 'Банк педагогических ситуаций', hero_sub: 'Amanzholov University',
+    hero_lead: 'Учись на реальных ситуациях — стань уверенным профессионалом!',
+    hero_slogan: 'Педагог сегодня — сильное общество завтра',
+    search_ph: 'Поиск по кейсам…',
+    stat_cases: 'педагогических кейсов', stat_videos: 'ситуационных видео', stat_ai: 'ассистент 24/7',
+    stat_aud: 'Для студентов, преподавателей и наставников',
+    featured: 'Кейсы для начала', all_cases: 'Все кейсы', open: 'Открыть',
+    how_title: 'Как работать с кейсом',
+    categories: 'Категории', found: 'Найдено', nothing: 'Ничего не найдено. Попробуйте изменить запрос.',
+    level: 'Сложность', grade: 'класс',
+    t_desc: 'Описание', t_analysis: 'Анализ', t_solutions: 'Решения', t_comment: 'Комментарий',
+    situation: 'Ситуация', names_changed: '* Имена изменены, ситуация обезличена.',
+    watch: 'Смотреть видео', discuss: 'Обсудить с AI', expert: 'Экспертный разбор',
+    diag_title: 'Диагностический лист', diag_hint: 'Заполните поля — записи сохраняются в этом браузере.',
+    saved: 'Сохранено', next_step: 'Далее: решения',
+    sol_title: 'Выберите вариант действий', sol_hint: 'Единственно правильного ответа нет — оцените последствия каждого варианта.',
+    consequences: 'Возможные последствия', own: 'Своё решение', own_ph: 'Опишите, как бы вы поступили…',
+    justify: 'Обоснование', justify_ph: 'Почему это решение? С какими принципами и нормами оно связано?',
+    principles: 'Педагогические принципы', save_portfolio: 'Сохранить в портфолио', in_portfolio: 'Решение сохранено в портфолио',
+    gate_title: 'Сначала примите решение', gate_text: 'Экспертный комментарий полезнее после самостоятельного анализа.',
+    gate_btn: 'Показать всё равно', go_solutions: 'Перейти к решениям',
+    expert_title: 'Экспертный комментарий', key_principles: 'Ключевые принципы',
+    reflection: 'Рефлексия', reflection_ph: 'Чем ваше решение отличается от экспертного? Что бы вы сделали иначе?',
+    ai_name: 'AI-ассистент', ai_org: 'Amanzholov University',
+    ai_hello: 'Привет! Я AI-ассистент. Помогу разобраться в педагогической ситуации — но решение примете вы. Выберите кейс или задайте вопрос.',
+    ai_case_intro: 'Давайте разберём кейс «{t}» вместе. Сначала уточним:',
+    ai_ph: 'Напишите свой вопрос…', ai_label: 'Ответ сгенерирован AI · демо-режим',
+    ai_report: 'Сообщить о некорректном ответе', ai_reported: 'Спасибо! Ответ отправлен на экспертную проверку.',
+    ai_pick: 'Выберите кейс для разбора:', ai_reset: 'Новый диалог',
+    ai_pii: 'Похоже, в сообщении есть персональные данные (ИИН, телефон или e-mail). Я скрыл их — пожалуйста, не загружайте данные реальных обучающихся.',
+    ai_no_answer: 'Я не даю единственно «правильного» ответа — в педагогике решение зависит от контекста. Давайте рассуждать вместе:',
+    ai_ack: ['Хорошее наблюдение.', 'Понимаю ход вашей мысли.', 'Это важная деталь.', 'Интересный подход.'],
+    ai_finish: 'Вы рассмотрели ключевые аспекты. Теперь сформулируйте решение и свяжите его с принципами — затем сравните с экспертным разбором.',
+    ai_to_solutions: 'Сформулировать решение', ai_to_expert: 'Экспертный разбор',
+    ai_suggest: 'Возможно, вам подойдут эти кейсы:',
+    ai_features: ['Задавайте вопросы по педагогическим ситуациям', 'Получайте рекомендации', 'Находите похожие кейсы', 'Развивайте профессиональное мышление'],
+    ai_start: 'Начать диалог',
+    video_title: 'Ситуационные видео', video_q: 'Вопросы для анализа', video_soon: 'Видео будет добавлено после съёмки',
+    video_to_case: 'Перейти к кейсу',
+    mat_title: 'Методические материалы', mat_algo: 'Алгоритм анализа педагогической ситуации', mat_princ: 'Нормативно-этические ориентиры',
+    mat_note: 'Раздел наполняется методистами через систему управления контентом.',
+    prof_title: 'Мой профиль', portfolio: 'Портфолио решений', bookmarks: 'Закладки', empty_portfolio: 'Пока нет сохранённых решений.',
+    empty_bm: 'Нет закладок.', export_csv: 'Выгрузить CSV', progress: 'Пройдено кейсов',
+    bm_add: 'В закладки', bm_remove: 'Убрать из закладок',
+    teach_title: 'Режим преподавателя', teach_assign: 'Подбор кейсов для занятия', teach_group: 'Группа', teach_deadline: 'Срок',
+    teach_btn: 'Назначить группе', teach_done: 'Кейсы назначены (демо).', teach_results: 'Результаты группы (демо-данные)',
+    teach_student: 'Студент', teach_status: 'Статус', teach_choice: 'Выбор', teach_score: 'Оценка',
+    st_done: 'Выполнено', st_prog: 'В процессе', st_none: 'Не начато',
+    about_title: 'О проекте', about_what: 'Что такое e-book?',
+    about_what_t: 'Интерактивный электронный учебно-методический ресурс, объединяющий реальные обезличенные педагогические ситуации, их анализ, методические рекомендации и ситуационные видеоматериалы с поддержкой AI-ассистента.',
+    about_goal: 'Основная цель',
+    about_goal_t: 'Повышение практико-ориентированности подготовки будущих педагогов путём анализа реальных, этически допустимых и методически значимых профессиональных ситуаций.',
+    about_tasks: 'Задачи',
+    tasks: ['Накопление и систематизация реальных педагогических ситуаций', 'Развитие педагогического мышления и навыков принятия решений', 'Интеграция кейс-метода в образовательный процесс', 'Обеспечение преподавателей готовыми материалами', 'Создание оригинального контента, включая ситуационные видео'],
+    access_title: 'Как получить доступ?',
+    access: ['Сайт научной библиотеки им. Б. Мамраева', 'QR-код (брошюры, плакаты, аудитории)', 'Ссылки в силлабусах и учебных материалах', 'Интеграция в LMS и АИС Platonus', 'Использование на занятиях и практике'],
+    proto: 'Прототип · демо-данные', back: 'Назад',
+  },
+  kz: {
+    uni: 'Сәрсен Аманжолов атындағы Шығыс Қазақстан университеті',
+    nav_home: 'Басты бет', nav_about: 'Жоба туралы', nav_catalog: 'Кейстер каталогы', nav_video: 'Жағдаяттық бейнелер',
+    nav_ai: 'AI-көмекші', nav_materials: 'Әдістемелік материалдар', nav_teacher: 'Оқытушы режимі',
+    tab_home: 'Басты', tab_cases: 'Кейстер', tab_ai: 'AI', tab_video: 'Бейне', tab_profile: 'Профиль',
+    hero_title: 'Педагогикалық жағдаяттар банкі', hero_sub: 'Amanzholov University',
+    hero_lead: 'Нақты жағдаяттардан үйрен — сенімді маман бол!',
+    hero_slogan: 'Бүгінгі педагог — ертеңгі мықты қоғам',
+    search_ph: 'Кейстер бойынша іздеу…',
+    stat_cases: 'педагогикалық кейс', stat_videos: 'жағдаяттық бейне', stat_ai: 'көмекші 24/7',
+    stat_aud: 'Студенттерге, оқытушыларға және тәлімгерлерге',
+    featured: 'Бастауға арналған кейстер', all_cases: 'Барлық кейстер', open: 'Ашу',
+    how_title: 'Кейспен қалай жұмыс істеу керек',
+    categories: 'Санаттар', found: 'Табылды', nothing: 'Ештеңе табылмады. Сұрауды өзгертіп көріңіз.',
+    level: 'Күрделілік', grade: 'сынып',
+    t_desc: 'Сипаттама', t_analysis: 'Талдау', t_solutions: 'Шешімдер', t_comment: 'Түсініктеме',
+    situation: 'Жағдаят', names_changed: '* Есімдер өзгертілген, жағдаят иесіздендірілген.',
+    watch: 'Бейнені көру', discuss: 'AI-мен талқылау', expert: 'Сарапшылық талдау',
+    diag_title: 'Диагностикалық парақ', diag_hint: 'Өрістерді толтырыңыз — жазбалар осы браузерде сақталады.',
+    saved: 'Сақталды', next_step: 'Келесі: шешімдер',
+    sol_title: 'Әрекет нұсқасын таңдаңыз', sol_hint: 'Жалғыз дұрыс жауап жоқ — әр нұсқаның салдарын бағалаңыз.',
+    consequences: 'Ықтимал салдары', own: 'Өз шешіміңіз', own_ph: 'Сіз қалай әрекет етер едіңіз, сипаттаңыз…',
+    justify: 'Негіздеме', justify_ph: 'Неге осы шешім? Ол қандай қағидаттармен және нормалармен байланысты?',
+    principles: 'Педагогикалық қағидаттар', save_portfolio: 'Портфолиоға сақтау', in_portfolio: 'Шешім портфолиоға сақталды',
+    gate_title: 'Алдымен шешім қабылдаңыз', gate_text: 'Сарапшылық түсініктеме өзіндік талдаудан кейін пайдалырақ.',
+    gate_btn: 'Бәрібір көрсету', go_solutions: 'Шешімдерге өту',
+    expert_title: 'Сарапшылық түсініктеме', key_principles: 'Негізгі қағидаттар',
+    reflection: 'Рефлексия', reflection_ph: 'Сіздің шешіміңіз сарапшылық шешімнен немен ерекшеленеді? Нені басқаша істер едіңіз?',
+    ai_name: 'AI-көмекші', ai_org: 'Amanzholov University',
+    ai_hello: 'Сәлем! Мен AI-көмекшімін. Педагогикалық жағдаятты түсінуге көмектесемін — бірақ шешімді сіз қабылдайсыз. Кейсті таңдаңыз немесе сұрақ қойыңыз.',
+    ai_case_intro: '«{t}» кейсін бірге талдайық. Алдымен нақтылайық:',
+    ai_ph: 'Сұрағыңызды жазыңыз…', ai_label: 'Жауапты AI жасаған · демо-режим',
+    ai_report: 'Қате жауап туралы хабарлау', ai_reported: 'Рақмет! Жауап сарапшылық тексеруге жіберілді.',
+    ai_pick: 'Талдау үшін кейсті таңдаңыз:', ai_reset: 'Жаңа диалог',
+    ai_pii: 'Хабарламада дербес деректер (ЖСН, телефон немесе e-mail) бар сияқты. Мен оларды жасырдым — нақты білім алушылардың деректерін жүктемеңіз.',
+    ai_no_answer: 'Мен жалғыз «дұрыс» жауап бермеймін — педагогикада шешім контекстке байланысты. Бірге ойланайық:',
+    ai_ack: ['Жақсы байқау.', 'Ойыңыздың барысын түсінемін.', 'Бұл маңызды деталь.', 'Қызықты көзқарас.'],
+    ai_finish: 'Сіз негізгі аспектілерді қарастырдыңыз. Енді шешіміңізді тұжырымдап, оны қағидаттармен байланыстырыңыз — содан кейін сарапшылық талдаумен салыстырыңыз.',
+    ai_to_solutions: 'Шешімді тұжырымдау', ai_to_expert: 'Сарапшылық талдау',
+    ai_suggest: 'Мүмкін, сізге мына кейстер сәйкес келеді:',
+    ai_features: ['Педагогикалық жағдаяттар бойынша сұрақ қойыңыз', 'Ұсыныстар алыңыз', 'Ұқсас кейстерді табыңыз', 'Кәсіби ойлауды дамытыңыз'],
+    ai_start: 'Диалогты бастау',
+    video_title: 'Жағдаяттық бейнелер', video_q: 'Талдауға арналған сұрақтар', video_soon: 'Бейне түсірілімнен кейін қосылады',
+    video_to_case: 'Кейске өту',
+    mat_title: 'Әдістемелік материалдар', mat_algo: 'Педагогикалық жағдаятты талдау алгоритмі', mat_princ: 'Нормативтік-этикалық бағдарлар',
+    mat_note: 'Бөлімді әдіскерлер контентті басқару жүйесі арқылы толтырады.',
+    prof_title: 'Менің профилім', portfolio: 'Шешімдер портфолиосы', bookmarks: 'Бетбелгілер', empty_portfolio: 'Әзірге сақталған шешімдер жоқ.',
+    empty_bm: 'Бетбелгілер жоқ.', export_csv: 'CSV жүктеу', progress: 'Өтілген кейстер',
+    bm_add: 'Бетбелгіге', bm_remove: 'Бетбелгіден алу',
+    teach_title: 'Оқытушы режимі', teach_assign: 'Сабаққа кейстер іріктеу', teach_group: 'Топ', teach_deadline: 'Мерзімі',
+    teach_btn: 'Топқа тағайындау', teach_done: 'Кейстер тағайындалды (демо).', teach_results: 'Топ нәтижелері (демо-деректер)',
+    teach_student: 'Студент', teach_status: 'Мәртебе', teach_choice: 'Таңдау', teach_score: 'Баға',
+    st_done: 'Орындалды', st_prog: 'Орындалуда', st_none: 'Басталмаған',
+    about_title: 'Жоба туралы', about_what: 'E-book деген не?',
+    about_what_t: 'Нақты иесіздендірілген педагогикалық жағдаяттарды, оларды талдауды, әдістемелік ұсыныстарды және жағдаяттық бейнематериалдарды AI-көмекшінің қолдауымен біріктіретін интерактивті электрондық оқу-әдістемелік ресурс.',
+    about_goal: 'Негізгі мақсат',
+    about_goal_t: 'Нақты, этикалық тұрғыдан жол берілетін және әдістемелік маңызды кәсіби жағдаяттарды талдау арқылы болашақ педагогтерді даярлаудың практикаға бағдарлануын арттыру.',
+    about_tasks: 'Міндеттер',
+    tasks: ['Нақты педагогикалық жағдаяттарды жинақтау және жүйелеу', 'Педагогикалық ойлау мен шешім қабылдау дағдыларын дамыту', 'Кейс-әдісті білім беру үдерісіне енгізу', 'Оқытушыларды дайын материалдармен қамтамасыз ету', 'Түпнұсқа контент жасау, соның ішінде жағдаяттық бейнелер'],
+    access_title: 'Қалай қол жеткізуге болады?',
+    access: ['Б. Мамраев атындағы ғылыми кітапхананың сайты', 'QR-код (буклеттер, плакаттар, аудиториялар)', 'Силлабустар мен оқу материалдарындағы сілтемелер', 'LMS және Platonus АБЖ-мен интеграция', 'Сабақтар мен практикада пайдалану'],
+    proto: 'Прототип · демо-деректер', back: 'Артқа',
+  },
+};
+
+/* ============================================================
+   ДАННЫЕ ПРОТОТИПА / ПРОТОТИП ДЕРЕКТЕРІ
+   Каждый текст — объект {ru, kz}. Кейсы — по единой схеме,
+   которую методисты затем будут заполнять в CMS.
+   ============================================================ */
+
+const CATEGORIES = [
+  { id: 'primary',   icon: 'school1',   ru: 'Начальная школа',          kz: 'Бастауыш мектеп' },
+  { id: 'middle',    icon: 'school2',   ru: 'Основная школа',           kz: 'Негізгі мектеп' },
+  { id: 'senior',    icon: 'school3',   ru: 'Старшая школа',            kz: 'Жоғары сыныптар' },
+  { id: 'inclusion', icon: 'inclusion', ru: 'Инклюзивное образование',  kz: 'Инклюзивті білім беру' },
+  { id: 'upbringing',icon: 'pin',       ru: 'Воспитательная работа',    kz: 'Тәрбие жұмысы' },
+  { id: 'assessment',icon: 'check',     ru: 'Оценивание',               kz: 'Бағалау' },
+  { id: 'parents',   icon: 'users',     ru: 'Работа с родителями',      kz: 'Ата-аналармен жұмыс' },
+  { id: 'digital',   icon: 'monitor',   ru: 'Цифровая среда',           kz: 'Цифрлық орта' },
+  { id: 'ethics',    icon: 'scale',     ru: 'Педагогическая этика',     kz: 'Педагогикалық әдеп' },
+  { id: 'unusual',   icon: 'spark',     ru: 'Нестандартные ситуации',   kz: 'Стандартты емес жағдаяттар' },
+];
+
+const LEVELS = {
+  low:    { ru: 'Низкая',  kz: 'Төмен',  cls: 'lvl-low' },
+  medium: { ru: 'Средняя', kz: 'Орташа', cls: 'lvl-med' },
+  high:   { ru: 'Высокая', kz: 'Жоғары', cls: 'lvl-high' },
+};
+
+const OUTCOME = {
+  good:  { ru: 'Конструктивно',  kz: 'Сындарлы',          cls: 'oc-good' },
+  risky: { ru: 'Рискованно',     kz: 'Тәуекелді',         cls: 'oc-risky' },
+  weak:  { ru: 'Малоэффективно', kz: 'Тиімділігі төмен',  cls: 'oc-weak' },
+};
+
+/* Педагогические принципы — для обоснования решения */
+const PRINCIPLES = [
+  { id: 'dignity',  ru: 'Уважение достоинства ученика',      kz: 'Оқушының қадір-қасиетін құрметтеу' },
+  { id: 'safety',   ru: 'Безопасность прежде всего',          kz: 'Ең алдымен қауіпсіздік' },
+  { id: 'consist',  ru: 'Последовательность правил',          kz: 'Ережелердің жүйелілігі' },
+  { id: 'activity', ru: 'Вовлечение через деятельность',      kz: 'Іс-әрекет арқылы тарту' },
+  { id: 'privacy',  ru: 'Конфиденциальность',                 kz: 'Құпиялылық' },
+  { id: 'individual', ru: 'Индивидуальный подход',            kz: 'Жеке көзқарас' },
+  { id: 'partner',  ru: 'Партнёрство с семьёй',               kz: 'Отбасымен серіктестік' },
+  { id: 'inclusion', ru: 'Инклюзивность',                     kz: 'Инклюзивтілік' },
+  { id: 'transparency', ru: 'Прозрачность оценивания',        kz: 'Бағалаудың ашықтығы' },
+];
+
+/* Диагностический лист (шаг 2 типового сценария) — общий для всех кейсов */
+const DIAG_FIELDS = [
+  { id: 'who',     ru: 'Участники и их интересы',            kz: 'Қатысушылар және олардың мүдделері' },
+  { id: 'problem', ru: 'Ключевая проблема',                  kz: 'Негізгі мәселе' },
+  { id: 'causes',  ru: 'Возможные причины',                  kz: 'Ықтимал себептер' },
+  { id: 'risks',   ru: 'Риски',                              kz: 'Тәуекелдер' },
+  { id: 'missing', ru: 'Каких данных не хватает?',           kz: 'Қандай деректер жетіспейді?' },
+];
+
+const VIDEO_QUESTIONS = [
+  { ru: 'В чём причина ситуации?',                       kz: 'Жағдаяттың себебі неде?' },
+  { ru: 'Какие варианты действий возможны?',             kz: 'Қандай әрекет нұсқалары болуы мүмкін?' },
+  { ru: 'Какими могут быть последствия?',                kz: 'Салдары қандай болуы мүмкін?' },
+  { ru: 'Какое решение вы бы приняли и почему?',         kz: 'Сіз қандай шешім қабылдар едіңіз және неге?' },
+];
+
+const CASES = [
+  {
+    id: 'PS-018',
+    cats: ['middle', 'digital'],
+    grade: '7–9',
+    level: 'medium',
+    hue: 210,
+    title: { ru: 'Смартфон на уроке', kz: 'Сабақтағы смартфон' },
+    short: {
+      ru: 'Учащиеся используют смартфоны, несмотря на просьбы учителя.',
+      kz: 'Оқушылар мұғалімнің өтінішіне қарамастан смартфон қолданады.',
+    },
+    text: {
+      ru: 'Во время урока несколько учащихся 8 класса неоднократно используют смартфоны, несмотря на просьбы учителя. Это отвлекает других и снижает эффективность занятия. Один из учеников, Арман*, заявляет, что «ищет информацию по теме». В школе действует правило об ограничении телефонов на уроках, но оно применяется непоследовательно.',
+      kz: 'Сабақ барысында 8-сыныптың бірнеше оқушысы мұғалімнің өтінішіне қарамастан смартфондарын қайта-қайта қолданады. Бұл басқа оқушылардың назарын бөліп, сабақтың тиімділігін төмендетеді. Оқушылардың бірі Арман* «тақырып бойынша ақпарат іздеп отырмын» дейді. Мектепте сабақта телефонды шектеу ережесі бар, бірақ ол жүйелі түрде сақталмайды.',
+    },
+    options: [
+      {
+        oc: 'risky',
+        ru: 'Изъять телефоны до конца урока.',
+        kz: 'Телефондарды сабақ соңына дейін жинап алу.',
+        cons: {
+          ru: 'Быстро восстанавливает тишину, но может вызвать сопротивление и открытый конфликт. Правовые основания изъятия личных вещей неоднозначны, а причина поведения не устранена.',
+          kz: 'Тыныштықты тез қалпына келтіреді, бірақ қарсылық пен ашық қақтығыс тудыруы мүмкін. Жеке заттарды алып қоюдың құқықтық негізі даулы, ал мінез-құлықтың себебі жойылмайды.',
+        },
+      },
+      {
+        oc: 'good',
+        ru: 'Включить телефоны в работу: дать задание на поиск информации с чёткими правилами и временем.',
+        kz: 'Телефондарды жұмысқа қосу: нақты ережелер мен уақыт шектеуі бар ақпарат іздеу тапсырмасын беру.',
+        cons: {
+          ru: 'Переключает активность учащихся в учебное русло и позволяет проверить слова Армана. Требует подготовки и чётких договорённостей с классом.',
+          kz: 'Оқушылардың белсенділігін оқу арнасына бағыттайды және Арманның сөзін тексеруге мүмкіндік береді. Дайындық пен сыныппен нақты келісімдерді талап етеді.',
+        },
+      },
+      {
+        oc: 'weak',
+        ru: 'Сделать замечание всему классу и пригрозить вызвать родителей.',
+        kz: 'Бүкіл сыныпқа ескерту жасап, ата-аналарды шақырамын деп қорқыту.',
+        cons: {
+          ru: 'Краткосрочный эффект. Снижает доверие и «наказывает» тех, кто не нарушал правило. Угроза без исполнения обесценивает слова учителя.',
+          kz: 'Әсері қысқа мерзімді. Сенімді төмендетеді және ережені бұзбағандарды да «жазалайды». Орындалмаған қорқыту мұғалім сөзінің салмағын кетіреді.',
+        },
+      },
+    ],
+    expert: {
+      ru: 'Эффективная стратегия сочетает немедленное и системное действие. На уроке — спокойно, без публичного противостояния, напомнить правило и предложить учебное использование устройства (например, 3-минутный поиск с указанием источника). После урока — индивидуальная беседа с Арманом и обсуждение с классом единых правил цифровой гигиены, согласованных с администрацией и родителями. Важно: изъятие личных вещей допустимо только в рамках утверждённых правил школы.',
+      kz: 'Тиімді стратегия жедел және жүйелі әрекетті ұштастырады. Сабақта — көпшілік алдында қарсы тұрмай, ережені сабырмен еске салып, құрылғыны оқу мақсатында пайдалануды ұсыну (мысалы, дереккөзін көрсете отырып 3 минуттық іздеу). Сабақтан кейін — Арманмен жеке әңгіме және сыныппен бірге әкімшілік пен ата-аналар келіскен цифрлық гигиенаның ортақ ережелерін талқылау. Маңызды: жеке заттарды алып қою тек мектептің бекітілген ережелері шеңберінде мүмкін.',
+    },
+    principles: ['dignity', 'consist', 'activity'],
+    ai: [
+      { ru: 'На каком этапе урока это происходит и как часто?', kz: 'Бұл сабақтың қай кезеңінде және қаншалықты жиі болады?' },
+      { ru: 'Как вы проверите, действительно ли Арман ищет информацию по теме?', kz: 'Арманның шынымен тақырып бойынша ақпарат іздеп отырғанын қалай тексересіз?' },
+      { ru: 'Как ваше действие повлияет на учеников, которые не нарушали правило?', kz: 'Сіздің әрекетіңіз ережені бұзбаған оқушыларға қалай әсер етеді?' },
+      { ru: 'Какое правило школы здесь применимо и соблюдается ли оно последовательно?', kz: 'Мұнда мектептің қай ережесі қолданылады және ол жүйелі сақтала ма?' },
+      { ru: 'Что вы сделаете после урока, чтобы ситуация не повторилась?', kz: 'Жағдай қайталанбауы үшін сабақтан кейін не істейсіз?' },
+    ],
+  },
+  {
+    id: 'PS-027',
+    cats: ['middle', 'upbringing'],
+    grade: '6',
+    level: 'high',
+    hue: 12,
+    title: { ru: 'Конфликт в классе', kz: 'Сыныптағы қақтығыс' },
+    short: {
+      ru: 'Ссора на перемене переросла в толкание, класс снимает на телефон.',
+      kz: 'Үзілістегі ұрыс итерісуге ұласты, сынып телефонға түсіруде.',
+    },
+    text: {
+      ru: 'На перемене между двумя учениками 6 класса, Данияром и Ильёй*, вспыхнула ссора, переросшая в толкание. Класс разделился на две группы, часть учащихся снимает происходящее на телефон. Учитель, войдя в кабинет, застаёт конфликт в разгаре. Через 2 минуты начинается урок.',
+      kz: 'Үзіліс кезінде 6-сыныптың екі оқушысы — Данияр мен Илья* арасында ұрыс шығып, итерісуге ұласты. Сынып екі топқа бөлінді, кейбір оқушылар болып жатқанды телефонға түсіріп жатыр. Мұғалім кабинетке кіргенде қақтығыстың қызып тұрған сәтін көреді. 2 минуттан кейін сабақ басталады.',
+    },
+    options: [
+      {
+        oc: 'good',
+        ru: 'Немедленно развести участников, остановить съёмку, начать урок, а разбор провести после урока с каждым отдельно.',
+        kz: 'Қатысушыларды дереу ажыратып, түсірілімді тоқтатып, сабақты бастау, ал талдауды сабақтан кейін әрқайсысымен жеке жүргізу.',
+        cons: {
+          ru: 'Обеспечивает безопасность и снижает накал. Отложенный разбор позволяет спокойно выслушать обе стороны. Важно не забыть о видео — оно может распространиться.',
+          kz: 'Қауіпсіздікті қамтамасыз етіп, шиеленісті төмендетеді. Кейінге қалдырылған талдау екі тарапты сабырмен тыңдауға мүмкіндік береді. Бейнені ұмытпау маңызды — ол таралып кетуі мүмкін.',
+        },
+      },
+      {
+        oc: 'risky',
+        ru: 'Разобрать конфликт сразу перед всем классом и выяснить, кто виноват.',
+        kz: 'Қақтығысты бірден бүкіл сынып алдында талдап, кім кінәлі екенін анықтау.',
+        cons: {
+          ru: 'Публичный разбор унижает участников и подогревает конфликт. Эмоции ещё высоки, объективность низкая.',
+          kz: 'Көпшілік алдындағы талдау қатысушыларды намыстандырып, қақтығысты өршітеді. Эмоция әлі жоғары, объективтілік төмен.',
+        },
+      },
+      {
+        oc: 'weak',
+        ru: 'Отправить обоих к завучу и начать урок.',
+        kz: 'Екеуін де оқу ісінің меңгерушісіне жіберіп, сабақты бастау.',
+        cons: {
+          ru: 'Снимает нагрузку с учителя, но перекладывает ответственность. Ученики пропускают урок, учитель теряет возможность выстроить отношения.',
+          kz: 'Мұғалімнің жүктемесін азайтады, бірақ жауапкершілікті басқаға аударады. Оқушылар сабақтан қалады, мұғалім қарым-қатынас орнату мүмкіндігінен айырылады.',
+        },
+      },
+    ],
+    expert: {
+      ru: 'Приоритет — физическая и психологическая безопасность. Учитель спокойно и твёрдо разводит участников, просит убрать телефоны и удалить записи (без изъятия устройств) и начинает урок. После урока — восстановительная беседа: каждый излагает свою версию, обсуждаются чувства и способы возмещения вреда. При повторении — подключение классного руководителя, психолога и родителей. Съёмка конфликта — повод для отдельного разговора о цифровой этике.',
+      kz: 'Басымдық — физикалық және психологиялық қауіпсіздік. Мұғалім сабырлы әрі батыл түрде қатысушыларды ажыратады, телефондарды жинап қойып, жазбаларды өшіруді сұрайды (құрылғыларды алмай) және сабақты бастайды. Сабақтан кейін — қалпына келтіру әңгімесі: әркім өз нұсқасын айтады, сезімдер мен келтірілген зиянды өтеу жолдары талқыланады. Қайталанған жағдайда — сынып жетекшісі, психолог және ата-аналар тартылады. Қақтығысты түсіру — цифрлық әдеп туралы жеке әңгімеге себеп.',
+    },
+    principles: ['safety', 'dignity', 'privacy'],
+    ai: [
+      { ru: 'Что важнее в первые секунды: выяснить причину или обеспечить безопасность?', kz: 'Алғашқы секундтарда не маңыздырақ: себебін анықтау ма, әлде қауіпсіздікті қамтамасыз ету ме?' },
+      { ru: 'Как вы поступите с видео, которые снимали ученики?', kz: 'Оқушылар түсірген бейнелермен не істейсіз?' },
+      { ru: 'Как выслушать обе стороны, не становясь судьёй?', kz: 'Төреші болмай, екі тарапты қалай тыңдауға болады?' },
+      { ru: 'Кого из специалистов школы стоит подключить и когда?', kz: 'Мектептің қай мамандарын және қашан тарту керек?' },
+    ],
+  },
+  {
+    id: 'PS-041',
+    cats: ['senior', 'assessment'],
+    grade: '10',
+    level: 'medium',
+    hue: 265,
+    title: { ru: 'Отказ выполнять задание', kz: 'Тапсырманы орындаудан бас тарту' },
+    short: {
+      ru: 'Прежде успешная ученица перестала выполнять задания.',
+      kz: 'Бұрын жақсы оқыған оқушы тапсырма орындауды тоқтатты.',
+    },
+    text: {
+      ru: 'Ученица 10 класса Айгерим* третий урок подряд отказывается выполнять письменные задания: «Это бессмысленно, мне это не пригодится». Раньше она хорошо училась. Одноклассники начинают поддерживать её позицию. Учитель замечает, что Айгерим выглядит уставшей.',
+      kz: '10-сынып оқушысы Айгерим* қатарынан үшінші сабақта жазбаша тапсырмаларды орындаудан бас тартады: «Бұл мағынасыз, маған бұл керек болмайды». Бұрын ол жақсы оқитын. Сыныптастары оның ұстанымын қолдай бастады. Мұғалім Айгеримнің шаршаңқы көрінетінін байқайды.',
+    },
+    options: [
+      {
+        oc: 'weak',
+        ru: 'Поставить «2» за невыполненное задание.',
+        kz: 'Орындалмаған тапсырма үшін «2» қою.',
+        cons: {
+          ru: 'Формально соответствует правилам, но не выясняет причину. Может усилить демотивацию и протест.',
+          kz: 'Ресми түрде ережеге сай, бірақ себебін анықтамайды. Уәждеменің төмендеуі мен наразылықты күшейтуі мүмкін.',
+        },
+      },
+      {
+        oc: 'good',
+        ru: 'Поговорить с Айгерим наедине: выяснить причины и показать практическую ценность темы.',
+        kz: 'Айгеримнен оңаша сөйлесу: себептерін анықтап, тақырыптың практикалық құндылығын көрсету.',
+        cons: {
+          ru: 'Позволяет выявить скрытые причины (усталость, ситуация дома, перегрузка) и восстановить доверие. Требует времени и деликатности.',
+          kz: 'Жасырын себептерді (шаршау, отбасындағы жағдай, шамадан тыс жүктеме) анықтап, сенімді қалпына келтіруге мүмкіндік береді. Уақыт пен нәзіктікті талап етеді.',
+        },
+      },
+      {
+        oc: 'risky',
+        ru: 'Публично объяснить классу, зачем нужна тема, и продолжить урок.',
+        kz: 'Тақырыптың не үшін қажет екенін сыныпқа көпшілік алдында түсіндіріп, сабақты жалғастыру.',
+        cons: {
+          ru: 'Может повысить общую мотивацию, но не затрагивает личную ситуацию Айгерим. Есть риск, что она воспримет это как давление.',
+          kz: 'Жалпы уәждемені арттыруы мүмкін, бірақ Айгеримнің жеке жағдайына әсер етпейді. Ол мұны қысым ретінде қабылдауы мүмкін.',
+        },
+      },
+    ],
+    expert: {
+      ru: 'Резкое изменение поведения прежде успешной ученицы — сигнал, требующий диагностики, а не наказания. Рекомендуется индивидуальная беседа без оценочных суждений, при необходимости — консультация с психологом и классным руководителем. Параллельно стоит пересмотреть задания: связать их с интересами и будущей профессией учащихся, дать право выбора формы выполнения. Оценивание должно оставаться прозрачным, но не превращаться в инструмент давления.',
+      kz: 'Бұрын табысты оқыған оқушының мінез-құлқының күрт өзгеруі — жазалауды емес, диагностиканы қажет ететін белгі. Баға бермейтін жеке әңгіме, қажет болса психологпен және сынып жетекшісімен кеңесу ұсынылады. Сонымен қатар тапсырмаларды қайта қарап, оларды оқушылардың қызығушылықтарымен және болашақ мамандығымен байланыстырып, орындау формасын таңдау құқығын берген жөн. Бағалау ашық болуы тиіс, бірақ қысым құралына айналмауы керек.',
+    },
+    principles: ['individual', 'dignity', 'transparency'],
+    ai: [
+      { ru: 'Какие изменения в поведении Айгерим вы заметили и о чём они могут говорить?', kz: 'Айгеримнің мінез-құлқында қандай өзгерістерді байқадыңыз және олар не туралы айтуы мүмкін?' },
+      { ru: 'Как оценка повлияет на её мотивацию в долгосрочной перспективе?', kz: 'Баға оның уәждемесіне ұзақ мерзімде қалай әсер етеді?' },
+      { ru: 'Как сделать задание значимым для старшеклассников?', kz: 'Тапсырманы жоғары сынып оқушылары үшін қалай маңызды етуге болады?' },
+      { ru: 'В какой момент стоит подключить психолога?', kz: 'Психологты қай сәтте тарту керек?' },
+    ],
+  },
+  {
+    id: 'PS-057',
+    cats: ['primary', 'parents', 'ethics'],
+    grade: '3',
+    level: 'medium',
+    hue: 160,
+    title: { ru: 'Работа с родителями', kz: 'Ата-аналармен жұмыс' },
+    short: {
+      ru: 'Гневное сообщение родителя в 23:00 и в общем чате.',
+      kz: 'Ата-ананың түнгі 23:00-дегі ашулы хабарламасы ортақ чатта.',
+    },
+    text: {
+      ru: 'Мама ученика 3 класса в 23:00 пишет учителю в мессенджер гневное сообщение: по её мнению, оценка за контрольную занижена, а учитель «придирается к ребёнку». Она требует пересмотреть оценку и угрожает пожаловаться директору. Сообщение также переслано в общий родительский чат.',
+      kz: '3-сынып оқушысының анасы түнгі сағат 23:00-де мұғалімге мессенджер арқылы ашулы хабарлама жазады: оның пікірінше, бақылау жұмысының бағасы төмендетілген, ал мұғалім «балаға шүйлігеді». Ол бағаны қайта қарауды талап етіп, директорға шағымданамын деп қорқытады. Хабарлама ата-аналардың ортақ чатына да жіберілген.',
+    },
+    options: [
+      {
+        oc: 'risky',
+        ru: 'Сразу ответить в общем чате, подробно объяснив критерии оценки.',
+        kz: 'Бағалау критерийлерін егжей-тегжейлі түсіндіріп, ортақ чатта бірден жауап беру.',
+        cons: {
+          ru: 'Публичная переписка эскалирует конфликт и нарушает конфиденциальность ученика: его оценка обсуждается при всех.',
+          kz: 'Көпшілік алдындағы хат алмасу қақтығысты өршітеді және оқушының құпиялылығын бұзады: оның бағасы барлығының алдында талқыланады.',
+        },
+      },
+      {
+        oc: 'good',
+        ru: 'Утром ответить лично, предложить встречу и подготовить работу ребёнка с критериями.',
+        kz: 'Таңертең жеке жауап беріп, кездесу ұсыну және баланың жұмысын критерийлерімен дайындау.',
+        cons: {
+          ru: 'Снижает эмоциональный накал, переводит разговор в конструктивное русло и защищает границы рабочего времени. Работа и критерии делают оценку прозрачной.',
+          kz: 'Эмоциялық шиеленісті төмендетеді, әңгімені сындарлы арнаға бұрады және жұмыс уақытының шекарасын қорғайды. Жұмыс пен критерийлер бағаны ашық етеді.',
+        },
+      },
+      {
+        oc: 'weak',
+        ru: 'Не отвечать и сразу передать вопрос директору.',
+        kz: 'Жауап бермей, мәселені бірден директорға беру.',
+        cons: {
+          ru: 'Может восприниматься как избегание: родитель чувствует, что его игнорируют. Информировать администрацию стоит, но параллельно с личным контактом.',
+          kz: 'Қашқақтау ретінде қабылдануы мүмкін: ата-ана өзін елемей отырғандай сезінеді. Әкімшілікті хабардар еткен жөн, бірақ жеке байланыспен қатар.',
+        },
+      },
+    ],
+    expert: {
+      ru: 'Не отвечайте на эмоции эмоциями и не ведите разбор в общем чате. Утром — короткий личный ответ: признание беспокойства родителя и приглашение на встречу. На встречу — работа ребёнка, критерии оценивания и примеры. Фокус — на общей цели: успехе ребёнка. Правила коммуникации (время, каналы связи) полезно согласовать в начале учебного года, а администрацию — проинформировать о ситуации.',
+      kz: 'Эмоцияға эмоциямен жауап бермеңіз және талдауды ортақ чатта жүргізбеңіз. Таңертең — қысқа жеке жауап: ата-ананың алаңдаушылығын мойындап, кездесуге шақыру. Кездесуге — баланың жұмысы, бағалау критерийлері және мысалдар. Назар — ортақ мақсатқа: баланың табысына. Байланыс ережелерін (уақыт, арналар) оқу жылының басында келісіп алған пайдалы, ал әкімшілікті жағдай туралы хабардар ету керек.',
+    },
+    principles: ['partner', 'privacy', 'transparency'],
+    ai: [
+      { ru: 'Чьи интересы и права затрагивает обсуждение оценки в общем чате?', kz: 'Бағаны ортақ чатта талқылау кімнің мүдделері мен құқықтарын қозғайды?' },
+      { ru: 'Какие материалы помогут сделать оценку прозрачной для родителя?', kz: 'Бағаны ата-ана үшін ашық етуге қандай материалдар көмектеседі?' },
+      { ru: 'Как обозначить границы рабочего времени, не обидев родителя?', kz: 'Ата-ананы ренжітпей, жұмыс уақытының шекарасын қалай белгілеуге болады?' },
+      { ru: 'Когда и как подключить администрацию?', kz: 'Әкімшілікті қашан және қалай тарту керек?' },
+    ],
+  },
+  {
+    id: 'PS-083',
+    cats: ['middle', 'inclusion'],
+    grade: '5',
+    level: 'high',
+    hue: 35,
+    title: { ru: 'Инклюзия: адаптация заданий', kz: 'Инклюзия: тапсырмаларды бейімдеу' },
+    short: {
+      ru: 'Ученику с РАС трудно в групповой работе, родители недовольны.',
+      kz: 'АСБ бар оқушыға топтық жұмыс қиын, ата-аналар наразы.',
+    },
+    text: {
+      ru: 'В 5 класс пришёл ученик с расстройством аутистического спектра, Тимур*. Он хорошо справляется с устными заданиями, но испытывает трудности с групповой работой и резко реагирует на шум. Ассистента (тьютора) в классе нет. Некоторые родители выражают недовольство тем, что «урок подстраивают под одного ребёнка».',
+      kz: '5-сыныпқа аутизм спектрінің бұзылысы бар оқушы Тимур* келді. Ол ауызша тапсырмаларды жақсы орындайды, бірақ топтық жұмыста қиналады және шуға күрт әсер етеді. Сыныпта ассистент (тьютор) жоқ. Кейбір ата-аналар «сабақты бір балаға бейімдеп жатыр» деп наразылық білдіруде.',
+    },
+    options: [
+      {
+        oc: 'risky',
+        ru: 'Освободить Тимура от групповой работы и давать ему отдельные задания.',
+        kz: 'Тимурды топтық жұмыстан босатып, оған бөлек тапсырмалар беру.',
+        cons: {
+          ru: 'Снижает стресс, но изолирует ученика и противоречит идее инклюзии. Навыки взаимодействия не развиваются.',
+          kz: 'Күйзелісті азайтады, бірақ оқушыны оқшаулап, инклюзия идеясына қайшы келеді. Өзара әрекеттесу дағдылары дамымайды.',
+        },
+      },
+      {
+        oc: 'good',
+        ru: 'Адаптировать формат: чёткая роль в паре, визуальное расписание, «тихий уголок»; запросить поддержку специалистов.',
+        kz: 'Форматты бейімдеу: жұптағы нақты рөл, көрнекі кесте, «тыныш бұрыш»; мамандардан қолдау сұрау.',
+        cons: {
+          ru: 'Сохраняет включённость и учитывает особенности ребёнка. Требует планирования и взаимодействия со службой психолого-педагогического сопровождения.',
+          kz: 'Қатысуды сақтап, баланың ерекшеліктерін ескереді. Жоспарлауды және психологиялық-педагогикалық сүйемелдеу қызметімен өзара әрекетті талап етеді.',
+        },
+      },
+      {
+        oc: 'weak',
+        ru: 'Работать в обычном режиме, ожидая, что ученик адаптируется сам.',
+        kz: 'Оқушы өзі бейімделеді деп күтіп, әдеттегі режимде жұмыс істеу.',
+        cons: {
+          ru: 'Высокий риск срывов и ухудшения состояния ребёнка. Не учитываются его особые образовательные потребности.',
+          kz: 'Баланың күйзеліске ұшырау және жағдайының нашарлау қаупі жоғары. Оның ерекше білім беру қажеттіліктері ескерілмейді.',
+        },
+      },
+    ],
+    expert: {
+      ru: 'Инклюзия — это не упрощение, а адаптация условий. Рекомендуется структурировать урок (визуальное расписание, предупреждение о смене активности), дать Тимуру предсказуемую роль в паре и возможность короткого перерыва в тихом месте. Необходимо обратиться в службу психолого-педагогического сопровождения школы за индивидуальной программой и запросить тьютора. С родителями класса — разговор о ценностях инклюзии без раскрытия диагноза ребёнка.',
+      kz: 'Инклюзия — жеңілдету емес, жағдайларды бейімдеу. Сабақты құрылымдау (көрнекі кесте, әрекет түрінің ауысуы туралы алдын ала ескерту), Тимурға жұпта болжамды рөл беру және тыныш жерде қысқа үзіліс жасау мүмкіндігін қарастыру ұсынылады. Жеке бағдарлама үшін мектептің психологиялық-педагогикалық сүйемелдеу қызметіне жүгініп, тьютор сұрау қажет. Сынып ата-аналарымен — баланың диагнозын ашпай, инклюзия құндылықтары туралы әңгіме.',
+    },
+    principles: ['inclusion', 'individual', 'privacy'],
+    ai: [
+      { ru: 'Какие сильные стороны Тимура можно использовать на уроке?', kz: 'Сабақта Тимурдың қандай күшті жақтарын пайдалануға болады?' },
+      { ru: 'Какие изменения среды снизят сенсорную нагрузку?', kz: 'Ортадағы қандай өзгерістер сенсорлық жүктемені азайтады?' },
+      { ru: 'Как говорить с родителями класса, не нарушая конфиденциальность?', kz: 'Құпиялылықты бұзбай, сынып ата-аналарымен қалай сөйлесуге болады?' },
+      { ru: 'Какие специалисты школы должны быть подключены?', kz: 'Мектептің қай мамандары тартылуы керек?' },
+    ],
+  },
+];
+
+/* Теоретический навигатор */
+const ALGORITHM = [
+  { ru: 'Погружение', kz: 'Ену', d: { ru: 'Прочитайте описание или посмотрите видеоситуацию.', kz: 'Сипаттаманы оқыңыз немесе жағдаяттық бейнені көріңіз.' } },
+  { ru: 'Диагностика', kz: 'Диагностика', d: { ru: 'Определите участников, проблему, причины, риски и недостающие данные.', kz: 'Қатысушыларды, мәселені, себептерді, тәуекелдерді және жетіспейтін деректерді анықтаңыз.' } },
+  { ru: 'Решение', kz: 'Шешім', d: { ru: 'Выберите предложенный вариант или сформулируйте собственный.', kz: 'Ұсынылған нұсқаны таңдаңыз немесе өзіңіздікін тұжырымдаңыз.' } },
+  { ru: 'AI-диалог', kz: 'AI-диалог', d: { ru: 'Ассистент задаёт уточняющие вопросы и показывает альтернативы.', kz: 'Көмекші нақтылаушы сұрақтар қойып, баламаларды көрсетеді.' } },
+  { ru: 'Обоснование', kz: 'Негіздеу', d: { ru: 'Свяжите решение с педагогическими принципами, нормами и контекстом.', kz: 'Шешімді педагогикалық қағидаттармен, нормалармен және контекстпен байланыстырыңыз.' } },
+  { ru: 'Рефлексия', kz: 'Рефлексия', d: { ru: 'Сравните своё решение с экспертным комментарием.', kz: 'Өз шешіміңізді сарапшылық түсініктемемен салыстырыңыз.' } },
+];
+
+/* ============================================================
+   E-BOOK · Банк педагогических ситуаций — прототип
+   Маршрутизация по hash, двуязычный интерфейс (kz / ru),
+   локальное хранение заметок и решений, демо AI-тьютор.
+   ============================================================ */
+
+/* ---------- хранилище (безопасно для file:// и приватного режима) ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('ebook.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('ebook.' + k, JSON.stringify(v)); } catch (e) {} },
+};
+
+let LANG = store.get('lang', 'kz');
+const t = (o) => (o && typeof o === 'object') ? (o[LANG] ?? o.ru) : o;
+const u = (k) => UI[LANG][k] ?? UI.ru[k] ?? k;
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = (s, r = document) => r.querySelector(s);
+const caseById = (id) => CASES.find(c => c.id === id);
+const catById = (id) => CATEGORIES.find(c => c.id === id);
+
+/* ---------- иконки ---------- */
+const P = {
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  home: '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',
+  cases: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 12h18"/>',
+  bot: '<rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M9 13h.01M15 13h.01M9.5 16h5"/><circle cx="12" cy="3.5" r="1"/>',
+  video: '<rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3z"/>',
+  play: '<path d="M8 5v14l11-7z"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  list: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  check: '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+  tick: '<path d="m5 12 5 5 9-10"/>',
+  school1: '<path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M10 21v-5h4v5M10 11h4"/>',
+  school2: '<path d="M2 21h20M4 21V9h16v12M12 3l8 6H4z"/><path d="M8 13h2M14 13h2M8 17h2M14 17h2"/>',
+  school3: '<path d="M3 21h18M5 21V8h6v13M11 21V4h8v17"/><path d="M14 8h2M14 12h2M14 16h2M7 12h2M7 16h2"/>',
+  inclusion: '<circle cx="12" cy="4.5" r="2"/><path d="M8 9h8M12 9v6M12 15l-3 6M12 15l3 6"/>',
+  pin: '<path d="M12 21s-6-6-6-11a6 6 0 0 1 12 0c0 5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5.5 6.5-5.5s5.5 2 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.5c2.6 0 4.6 1.6 5.5 4.5"/>',
+  monitor: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+  scale: '<path d="M12 3v18M5 21h14M4 7h16M7 7l-3 7a3 3 0 0 0 6 0zM17 7l-3 7a3 3 0 0 0 6 0z"/>',
+  spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  send: '<path d="M4 12 20 4l-6 16-3-7z"/><path d="m11 13 9-9"/>',
+  flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+  bookmark: '<path d="M6 3h12v18l-6-4-6 4z"/>',
+  lock: '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  chev: '<path d="m9 6 6 6-6 6"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  qr: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M17 20h4M20 17v3"/>',
+  doc: '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h6M9 16h6"/>',
+  cap: '<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5M22 9v6"/>',
+  award: '<circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 7 5-3 5 3-1.5-7"/>',
+  copy: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5a4 4 0 1 0 0 5"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+  teacher: '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M7 20l2-4M17 20l-2-4M7 9h6M7 12h4"/>',
+  download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+};
+const ic = (n, cls = '') => `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n] || ''}</svg>`;
+const grad = (h) => `background:linear-gradient(135deg,hsl(${h} 70% 62%),hsl(${(h + 30) % 360} 65% 42%))`;
+const catIcon = (c) => catById(c.cats[c.cats.length - 1])?.icon || 'cases';
+
+/* ---------- состояние пользователя ---------- */
+const getNotes = (id) => store.get('diag.' + id, {});
+const getDecision = (id) => store.get('dec.' + id, null);
+const portfolio = () => CASES.map(c => ({ c, d: getDecision(c.id) })).filter(x => x.d);
+const bookmarks = () => store.get('bm', []);
+function toggleBm(id) { const b = bookmarks(); const i = b.indexOf(id); i < 0 ? b.push(id) : b.splice(i, 1); store.set('bm', b); render(); }
+function toast(msg) { const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2400); }
+
+/* ---------- шапка, навигация ---------- */
+function header(route) {
+  const items = [['home', 'nav_home'], ['about', 'nav_about'], ['catalog', 'nav_catalog'], ['video', 'nav_video'], ['ai', 'nav_ai'], ['materials', 'nav_materials'], ['teacher', 'nav_teacher']];
+  return `<header class="top"><div class="wrap bar1">
+    <a class="brand" href="#/home"><div class="logo">AU</div><small>${u('uni')}</small></a>
+    <div class="tools">
+      <span class="proto">${u('proto')}</span>
+      <div class="lang" role="group" aria-label="Language">
+        <button data-lang="kz" class="${LANG === 'kz' ? 'on' : ''}">ҚАЗ</button><button data-lang="ru" class="${LANG === 'ru' ? 'on' : ''}">РУС</button>
+      </div>
+      <a class="iconbtn" href="#/profile" title="${u('prof_title')}">${ic('user')}</a>
+    </div></div>
+    <div class="bar2"><nav class="wrap nav">${items.map(([r, k]) => `<a href="#/${r}" class="${route === r || (route === 'case' && r === 'catalog') ? 'on' : ''}">${u(k)}</a>`).join('')}</nav></div></header>`;
+}
+function tabbar(route) {
+  const items = [['home', 'home', 'tab_home'], ['catalog', 'cases', 'tab_cases'], ['ai', 'bot', 'tab_ai'], ['video', 'video', 'tab_video'], ['profile', 'user', 'tab_profile']];
+  return `<nav class="tabbar">${items.map(([r, i, k]) => `<a href="#/${r}" class="${route === r || (route === 'case' && r === 'catalog') ? 'on' : ''}">${ic(i)}<span>${u(k)}</span></a>`).join('')}</nav>`;
+}
+
+/* ---------- элементы ---------- */
+function caseCard(c) {
+  const done = getDecision(c.id);
+  return `<a class="card ccard" href="#/case/${c.id}/desc">
+    <div class="thumb" style="${grad(c.hue)}">${ic(catIcon(c))}</div>
+    <div style="min-width:0;flex:1">
+      <div class="code">${c.id}${done ? ` · <span style="color:var(--good)">✓</span>` : ''}</div>
+      <h4>${esc(t(c.title))}</h4>
+      <div class="row"><span class="chip">${esc(t(catById(c.cats[c.cats.length - 1])))}</span><span class="chip ${LEVELS[c.level].cls}">${t(LEVELS[c.level])}</span></div>
+    </div>${ic('chev', 'muted')}</a>`;
+}
+function heroArt() {
+  return `<svg viewBox="0 0 400 340" preserveAspectRatio="xMidYMax slice">
+    <path d="M0 230 L70 150 L120 190 L190 110 L260 180 L320 130 L400 200 L400 340 L0 340Z" fill="#ffffff" opacity=".35"/>
+    <path d="M0 260 L90 200 L160 240 L240 190 L320 230 L400 210 L400 340 L0 340Z" fill="#ffffff" opacity=".45"/>
+    <g fill="#f4f8ff" stroke="#bcd0f0"><rect x="70" y="170" width="250" height="120"/><rect x="160" y="140" width="70" height="150"/></g>
+    <g fill="#8fb2e6">${Array.from({ length: 5 }, (_, r) => Array.from({ length: 8 }, (_, k) => k === 3 || k === 4 ? '' : `<rect x="${84 + k * 29}" y="${182 + r * 20}" width="16" height="11" rx="1"/>`).join('')).join('')}
+      ${Array.from({ length: 6 }, (_, r) => `<rect x="172" y="${152 + r * 22}" width="18" height="12"/><rect x="200" y="${152 + r * 22}" width="18" height="12"/>`).join('')}</g>
+    <rect x="0" y="288" width="400" height="52" fill="#e6efe0"/>
+    <g fill="#2f7d5b">${[30, 345, 375, 50].map((x, i) => `<path d="M${x} ${300 - (i % 2) * 10} l14 -60 l14 60z"/>`).join('')}</g>
+  </svg>`;
+}
+
+/* ---------- страницы ---------- */
+function pageHome() {
+  const counts = CATEGORIES.slice(0, 6);
+  return `<section class="hero">
+      <div class="hero-l">
+        <h1>${u('hero_title')}<span>${u('hero_sub')}</span></h1>
+        <p class="lead">${u('hero_lead')}</p>
+        <form class="search" id="hsearch">${ic('search', 'muted')}<input name="q" placeholder="${u('search_ph')}" aria-label="${u('search_ph')}"></form>
+        <div class="cats">${counts.map(c => `<a class="cat" href="#/catalog?cat=${c.id}"><div class="ci">${ic(c.icon)}</div>${t(c)}</a>`).join('')}</div>
+        <div class="stats">
+          <div class="stat"><b>200+</b><span>${u('stat_cases')}</span></div>
+          <div class="stat"><b>50+</b><span>${u('stat_videos')}</span></div>
+          <div class="stat"><b>AI</b><span>${u('stat_ai')}</span></div>
+          <div class="stat"><span>${u('stat_aud')}</span></div>
+        </div>
+      </div>
+      <div class="hero-r">${heroArt()}<div class="slogan">${u('hero_slogan')}</div></div>
+    </section>
+    <div style="display:flex;justify-content:space-between;align-items:end"><h2 class="sec-title">${u('featured')}</h2><a class="btn btn-l" href="#/catalog" style="margin-bottom:14px">${u('all_cases')} ${ic('chev')}</a></div>
+    <div class="grid3">${CASES.slice(0, 3).map(caseCard).join('')}</div>
+    <h2 class="sec-title">${u('how_title')}</h2>
+    <div class="steps">${ALGORITHM.map((s, i) => `<div class="card step"><div class="n">${i + 1}</div><h4>${t(s)}</h4><p>${t(s.d)}</p></div>`).join('')}</div>`;
+}
+
+function pageCatalog(q) {
+  const cat = q.get('cat') || 'all';
+  const s = (q.get('q') || '').trim().toLowerCase();
+  const lvl = q.get('lvl') || '';
+  const list = CASES.filter(c => (cat === 'all' || c.cats.includes(cat)) && (!lvl || c.level === lvl) &&
+    (!s || [c.id, c.title.ru, c.title.kz, c.text.ru, c.text.kz].join(' ').toLowerCase().includes(s)));
+  const link = (k, v) => { const p = new URLSearchParams(q); v ? p.set(k, v) : p.delete(k); return '#/catalog?' + p; };
+  return `<div class="catalog">
+    <aside class="card side"><h4>${u('categories')}</h4>
+      <a href="${link('cat', '')}" class="${cat === 'all' ? 'on' : ''}">${ic('cases')}${u('all_cases')}<em>${CASES.length}</em></a>
+      ${CATEGORIES.map(c => `<a href="${link('cat', c.id)}" class="${cat === c.id ? 'on' : ''}">${ic(c.icon)}${t(c)}<em>${CASES.filter(x => x.cats.includes(c.id)).length}</em></a>`).join('')}
+    </aside>
+    <section>
+      <div class="filters">
+        <form class="search" id="csearch">${ic('search', 'muted')}<input name="q" value="${esc(q.get('q') || '')}" placeholder="${u('search_ph')}"></form>
+        <select id="lvl" aria-label="${u('level')}"><option value="">${u('level')}: —</option>${Object.entries(LEVELS).map(([k, v]) => `<option value="${k}" ${lvl === k ? 'selected' : ''}>${t(v)}</option>`).join('')}</select>
+      </div>
+      <p class="muted" style="margin:0 0 10px">${u('found')}: ${list.length}</p>
+      <div class="list">${list.length ? list.map(caseCard).join('') : `<div class="card pad muted">${u('nothing')}</div>`}</div>
+    </section></div>`;
+}
+
+function pageCase(id, tab) {
+  const c = caseById(id); if (!c) return pageCatalog(new URLSearchParams());
+  const dec = getDecision(id);
+  const notes = getNotes(id);
+  const hasNotes = Object.values(notes).some(v => v && v.trim());
+  const bm = bookmarks().includes(id);
+  const tabs = [['desc', 't_desc', false], ['analysis', 't_analysis', hasNotes], ['solutions', 't_solutions', !!dec], ['comment', 't_comment', false]];
+  let body = '';
+  if (tab === 'analysis') {
+    body = `<div><h3>${u('diag_title')}</h3><p class="muted" style="margin-top:-4px">${u('diag_hint')}</p>
+      ${DIAG_FIELDS.map(f => `<div class="field"><label for="d_${f.id}">${t(f)}</label><textarea id="d_${f.id}" data-diag="${f.id}">${esc(notes[f.id] || '')}</textarea></div>`).join('')}
+      <div class="savehint" id="savehint"></div>
+      <a class="btn btn-p" href="#/case/${id}/solutions">${u('next_step')} ${ic('chev')}</a></div>`;
+  } else if (tab === 'solutions') {
+    const sel = dec ? dec.choice : (window._pick?.[id] ?? null);
+    body = `<div><h3>${u('sol_title')}</h3><p class="muted" style="margin-top:-4px">${u('sol_hint')}</p>
+      ${c.options.map((o, i) => `<button class="opt ${sel === i ? 'sel' : ''}" data-opt="${i}"><span class="lt">${'ABC'[i]}</span>${esc(t(o))}
+        ${sel === i ? `<div class="cons"><b>${u('consequences')} <span class="chip ${OUTCOME[o.oc].cls}">${t(OUTCOME[o.oc])}</span></b>${esc(t(o.cons))}</div>` : ''}</button>`).join('')}
+      <button class="opt ${sel === 'own' ? 'sel' : ''}" data-opt="own"><span class="lt">+</span>${u('own')}</button>
+      <div class="field" style="margin-top:16px"><label>${u('own')}</label><textarea id="own" placeholder="${u('own_ph')}">${esc(dec?.own || '')}</textarea></div>
+      <div class="field"><label>${u('justify')}</label><textarea id="just" placeholder="${u('justify_ph')}">${esc(dec?.just || '')}</textarea></div>
+      <div class="field"><label>${u('principles')}</label><div class="pchips">${PRINCIPLES.map(p => `<button class="pchip ${(dec?.pr || window._pr?.[id] || []).includes(p.id) ? 'on' : ''}" data-pr="${p.id}">${t(p)}</button>`).join('')}</div></div>
+      <button class="btn btn-p" id="savedec">${ic('download')} ${u('save_portfolio')}</button>
+      ${dec ? `<span style="margin-left:12px;color:var(--good);font-weight:600">✓ ${u('in_portfolio')}</span>` : ''}</div>`;
+  } else if (tab === 'comment') {
+    if (!dec && !window._unlock?.[id]) {
+      body = `<div class="card gate">${ic('lock')}<h3>${u('gate_title')}</h3><p class="muted">${u('gate_text')}</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a class="btn btn-p" href="#/case/${id}/solutions">${u('go_solutions')}</a><button class="btn btn-o" id="unlock">${u('gate_btn')}</button></div></div>`;
+    } else {
+      const mine = dec ? (dec.choice === 'own' ? (dec.own || '—') : `${'ABC'[dec.choice]}. ${t(c.options[dec.choice])}`) : '—';
+      body = `<div><h3>${u('expert_title')}</h3><div class="expert">${esc(t(c.expert))}</div>
+        <div class="compare"><div class="box"><h4>${u('portfolio')}</h4>${esc(mine)}${dec?.just ? `<p class="muted" style="margin:6px 0 0">${esc(dec.just)}</p>` : ''}</div>
+          <div class="box"><h4>${u('key_principles')}</h4><div class="pchips">${c.principles.map(p => `<span class="chip">${t(PRINCIPLES.find(x => x.id === p))}</span>`).join('')}</div></div></div>
+        <div class="field"><label>${u('reflection')}</label><textarea id="refl" data-refl placeholder="${u('reflection_ph')}">${esc(store.get('refl.' + id, ''))}</textarea></div>
+        <div class="savehint" id="savehint"></div></div>`;
+    }
+  } else {
+    body = `<div><h3>${u('situation')}</h3><p class="case-text">${esc(t(c.text))}</p><p class="muted" style="font-size:13px">${u('names_changed')}</p></div>`;
+  }
+  const side = `<div class="actions">
+      <a class="btn btn-p btn-block" href="#/video/${id}">${ic('play')} ${u('watch')}</a>
+      <a class="btn btn-v btn-block" href="#/ai/${id}">${ic('bot')} ${u('discuss')}</a>
+      <a class="btn btn-l btn-block" href="#/case/${id}/comment">${ic('book')} ${u('expert')}</a>
+      <button class="btn btn-o btn-block" id="bm">${ic('bookmark')} ${bm ? u('bm_remove') : u('bm_add')}</button></div>`;
+  return `<div class="crumb"><a href="#/catalog">${u('nav_catalog')}</a>${ic('chev')}<span>${c.id}</span></div>
+    <article class="card">
+      <div class="case-head"><div><div class="code">${c.id}</div><h1>${esc(t(c.title))}</h1>
+        <div class="row" style="display:flex;gap:6px;flex-wrap:wrap">${c.cats.map(k => `<span class="chip">${t(catById(k))}</span>`).join('')}<span class="chip">${c.grade} ${u('grade')}</span><span class="chip ${LEVELS[c.level].cls}">${u('level')}: ${t(LEVELS[c.level])}</span></div></div>
+        <div class="case-img" style="${grad(c.hue)}">${ic(catIcon(c))}</div></div>
+      <nav class="tabs">${tabs.map(([k, l, d]) => `<a href="#/case/${id}/${k}" class="${tab === k ? 'on' : ''}">${u(l)}${d ? '<span class="dot"></span>' : ''}</a>`).join('')}</nav>
+      <div class="case-body">${body}${side}</div>
+    </article>`;
+}
+
+/* ---------- AI-тьютор (демо) ----------
+   В продакшене askTutor() отправляет запрос на сервер:
+   POST /api/tutor {caseId, history, lang} → LLM + RAG по методбазе
+   с системной инструкцией «сократический тьютор» и экспертной картой кейса. */
+let CHAT = store.get('chat', null);
+function chatInit(caseId) {
+  CHAT = { caseId: caseId || null, step: 0, msgs: [] };
+  CHAT.msgs.push({ from: 'ai', kind: 'hello' });
+  if (caseId) CHAT.msgs.push({ from: 'ai', kind: 'intro', step: 0 });
+  else CHAT.msgs.push({ from: 'ai', kind: 'pick' });
+  store.set('chat', CHAT);
+}
+function redactPII(s) {
+  let hit = false;
+  const r = s.replace(/\b\d{12}\b/g, () => (hit = true, '[ИИН скрыт]'))
+    .replace(/(\+?7|8)[\s(-]*\d{3}[\s)-]*\d{3}[\s-]*\d{2}[\s-]*\d{2}/g, () => (hit = true, '[тел. скрыт]'))
+    .replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, () => (hit = true, '[e-mail скрыт]'));
+  return { text: r, hit };
+}
+function askTutor(text) {
+  const out = [];
+  const low = text.toLowerCase();
+  const { text: clean, hit } = redactPII(text);
+  CHAT.msgs.push({ from: 'me', text: clean });
+  if (hit) out.push({ from: 'ai', kind: 'pii' });
+  const wantsAnswer = /(правильн|верн|ответ|дұрыс|жауап)/.test(low);
+  if (!CHAT.caseId) {
+    const words = low.split(/[^\p{L}\d]+/u).filter(w => w.length > 3);
+    const found = CASES.filter(c => words.some(w => [c.title.ru, c.title.kz, c.text.ru, c.text.kz].join(' ').toLowerCase().includes(w.slice(0, 5))));
+    out.push({ from: 'ai', kind: 'suggest', ids: (found.length ? found : CASES).slice(0, 3).map(c => c.id) });
+  } else {
+    const c = caseById(CHAT.caseId);
+    CHAT.step++;
+    if (wantsAnswer) out.push({ from: 'ai', kind: 'noanswer', step: Math.min(CHAT.step, c.ai.length - 1) });
+    else if (CHAT.step < c.ai.length) out.push({ from: 'ai', kind: 'ask', step: CHAT.step, ack: CHAT.step % 4 });
+    else out.push({ from: 'ai', kind: 'finish' });
+  }
+  return out;
+}
+function aiMsgHTML(m, i) {
+  const c = CHAT.caseId ? caseById(CHAT.caseId) : null;
+  let h = '';
+  if (m.kind === 'hello') h = u('ai_hello');
+  if (m.kind === 'pick') h = `${u('ai_pick')}<div class="quick">${CASES.map(x => `<button data-pick="${x.id}">${x.id} · ${esc(t(x.title))}</button>`).join('')}</div>`;
+  if (m.kind === 'suggest') h = `${u('ai_suggest')}<div class="quick">${m.ids.map(id => `<button data-pick="${id}">${id} · ${esc(t(caseById(id).title))}</button>`).join('')}</div>`;
+  if (m.kind === 'pii') h = `⚠️ ${u('ai_pii')}`;
+  if (c && m.kind === 'intro') h = `${u('ai_case_intro').replace('{t}', esc(t(c.title)))}<ol>${c.ai.slice(0, 1).map(q => `<li>${t(q)}</li>`).join('')}</ol>`;
+  if (c && m.kind === 'ask') h = `${UI[LANG].ai_ack[m.ack]} ${t(c.ai[m.step])}`;
+  if (c && m.kind === 'noanswer') h = `${u('ai_no_answer')} ${t(c.ai[m.step])}`;
+  if (c && m.kind === 'finish') h = `${u('ai_finish')}<div class="quick"><button data-go="#/case/${c.id}/solutions">${u('ai_to_solutions')}</button><button data-go="#/case/${c.id}/comment">${u('ai_to_expert')}</button></div>`;
+  const meta = (m.kind === 'hello' || m.kind === 'pick') ? '' : `<div class="meta"><span>${u('ai_label')}</span><button data-report="${i}">${m.reported ? '✓' : u('ai_report')}</button></div>`;
+  return `<div class="msg"><div class="bot">${ic('bot')}</div><div class="bubble">${h}${meta}</div></div>`;
+}
+function pageAI(caseId) {
+  if (!CHAT || (caseId && CHAT.caseId !== caseId)) chatInit(caseId);
+  const c = CHAT.caseId ? caseById(CHAT.caseId) : null;
+  return `<div class="chat-wrap">
+    <aside class="chat-side">
+      <div class="ai-promo"><div class="bot" style="width:56px;height:56px">${ic('bot')}</div><h3>${u('ai_name')}</h3>
+        <ul class="feat">${UI[LANG].ai_features.map(f => `<li>${ic('check')}${f}</li>`).join('')}</ul></div>
+      ${c ? `<div style="margin-top:14px">${caseCard(c)}</div>` : ''}
+    </aside>
+    <section class="card chat">
+      <div class="chat-h"><div class="bot">${ic('bot')}</div><div><b>${u('ai_name')}</b><small>${u('ai_org')}${c ? ' · ' + c.id : ''}</small></div>
+        <button class="btn btn-o" id="newchat" style="margin-left:auto;padding:8px 12px;font-size:13px">${u('ai_reset')}</button></div>
+      <div class="msgs" id="msgs">${CHAT.msgs.map((m, i) => m.from === 'me' ? `<div class="msg me"><div class="bubble">${esc(m.text)}</div></div>` : aiMsgHTML(m, i)).join('')}</div>
+      <form class="compose" id="compose"><input id="cinput" autocomplete="off" placeholder="${u('ai_ph')}"><button class="send" aria-label="send">${ic('send')}</button></form>
+    </section></div>`;
+}
+
+function videoPlayer(c, big) {
+  return `<div class="player" style="${grad(c.hue)}"><span class="soon">${u('video_soon')}</span>
+    <div class="play">${ic('play')}</div>
+    ${big ? `<div class="pbar"><span>0:00 / 2:35</span><div class="track"></div>${ic('monitor')}</div>` : ''}</div>`;
+}
+function pageVideo(id) {
+  const c = id && caseById(id);
+  if (!c) return `<h2 class="sec-title" style="margin-top:0">${u('video_title')}</h2>
+    <div class="vlist">${CASES.map(x => `<a class="card vitem" href="#/video/${x.id}">${videoPlayer(x)}<div class="t"><div class="muted" style="font-size:12px;font-weight:700">${x.id}</div><b>${esc(t(x.title))}</b></div></a>`).join('')}</div>`;
+  return `<div class="crumb"><a href="#/video">${u('video_title')}</a>${ic('chev')}<span>${c.id}</span></div>
+    <div class="grid2" style="grid-template-columns:1.6fr 1fr">
+      <div class="card pad">${videoPlayer(c, true)}<h2 style="margin-top:16px">${c.id} · ${esc(t(c.title))}</h2><p class="muted">${esc(t(c.short))}</p></div>
+      <div class="card pad"><h3 style="margin-bottom:12px">${u('video_q')}</h3><ol class="qlist">${VIDEO_QUESTIONS.map(q => `<li>${t(q)}</li>`).join('')}</ol>
+        <div class="actions" style="margin-top:18px"><a class="btn btn-p" href="#/case/${c.id}/analysis">${u('video_to_case')}</a><a class="btn btn-v" href="#/ai/${c.id}">${ic('bot')} ${u('discuss')}</a></div></div>
+    </div>`;
+}
+
+function pageMaterials() {
+  return `<h2 class="sec-title" style="margin-top:0">${u('mat_title')}</h2>
+    <div class="grid2">
+      <div class="card pad"><h3 style="margin-bottom:14px">${u('mat_algo')}</h3>
+        ${ALGORITHM.map((s, i) => `<div style="display:flex;gap:12px;margin-bottom:12px"><div class="step" style="padding:0"><div class="n">${i + 1}</div></div><div><b>${t(s)}</b><div class="muted" style="font-size:14px">${t(s.d)}</div></div></div>`).join('')}</div>
+      <div class="card pad"><h3 style="margin-bottom:14px">${u('mat_princ')}</h3>
+        <ul class="ticks">${PRINCIPLES.map(p => `<li>${ic('tick')}${t(p)}</li>`).join('')}</ul>
+        <p class="muted" style="font-size:13px;margin-top:16px">${u('mat_note')}</p></div>
+    </div>`;
+}
+
+function pageProfile() {
+  const pf = portfolio();
+  const bm = bookmarks().map(caseById).filter(Boolean);
+  return `<h2 class="sec-title" style="margin-top:0">${u('prof_title')}</h2>
+    <div class="grid3" style="margin-bottom:16px">
+      <div class="card pad"><div class="muted">${u('progress')}</div><b style="font-size:30px;color:var(--blue-dd)">${pf.length} / ${CASES.length}</b>
+        <div style="height:8px;background:var(--blue-l);border-radius:4px;margin-top:8px"><div style="height:8px;border-radius:4px;background:var(--blue);width:${pf.length / CASES.length * 100}%"></div></div></div>
+      <div class="card pad"><div class="muted">${u('bookmarks')}</div><b style="font-size:30px;color:var(--blue-dd)">${bm.length}</b></div>
+      <div class="card pad" style="display:flex;align-items:center"><button class="btn btn-l btn-block" id="csv">${ic('download')} ${u('export_csv')}</button></div>
+    </div>
+    <div class="quicklinks">${[['materials', 'book', 'nav_materials'], ['teacher', 'teacher', 'nav_teacher'], ['about', 'list', 'nav_about']].map(([r, i, k]) => `<a class="card" href="#/${r}">${ic(i)}<span>${u(k)}</span>${ic('chev', 'muted')}</a>`).join('')}</div>
+    <div class="grid2">
+      <div class="card pad"><h3 style="margin-bottom:12px">${u('portfolio')}</h3>
+        ${pf.length ? `<table><tr><th>${u('nav_catalog')}</th><th>${u('teach_choice')}</th></tr>${pf.map(({ c, d }) => `<tr><td><a href="#/case/${c.id}/comment" style="color:var(--blue);font-weight:600">${c.id}</a> ${esc(t(c.title))}</td><td>${d.choice === 'own' ? u('own') : 'ABC'[d.choice] + ' · <span class="chip ' + OUTCOME[c.options[d.choice].oc].cls + '">' + t(OUTCOME[c.options[d.choice].oc]) + '</span>'}</td></tr>`).join('')}</table>` : `<p class="muted">${u('empty_portfolio')}</p>`}</div>
+      <div class="card pad"><h3 style="margin-bottom:12px">${u('bookmarks')}</h3>
+        ${bm.length ? `<div class="list">${bm.map(caseCard).join('')}</div>` : `<p class="muted">${u('empty_bm')}</p>`}</div>
+    </div>`;
+}
+
+function pageTeacher() {
+  const demo = [['Студент 01', 'done', 1, 92], ['Студент 02', 'done', 0, 74], ['Студент 03', 'prog', null, null], ['Студент 04', 'done', 'own', 88], ['Студент 05', 'none', null, null]];
+  const st = { done: ['st_done', 'oc-good'], prog: ['st_prog', 'oc-risky'], none: ['st_none', ''] };
+  const c = CASES[0];
+  return `<h2 class="sec-title" style="margin-top:0">${u('teach_title')}</h2>
+    <div class="grid2">
+      <div class="card pad"><h3 style="margin-bottom:12px">${u('teach_assign')}</h3>
+        ${CASES.map(x => `<label class="checkrow"><input type="checkbox" ${x.id === c.id ? 'checked' : ''}><b>${x.id}</b> ${esc(t(x.title))}<span class="chip ${LEVELS[x.level].cls}" style="margin-left:auto">${t(LEVELS[x.level])}</span></label>`).join('')}
+        <div class="formrow"><select aria-label="${u('teach_group')}"><option>${u('teach_group')}: ПО-21</option><option>${u('teach_group')}: ПО-22</option></select><input type="date" aria-label="${u('teach_deadline')}"></div>
+        <button class="btn btn-p" id="assign">${u('teach_btn')}</button></div>
+      <div class="card pad"><h3 style="margin-bottom:12px">${u('teach_results')} · ${c.id}</h3>
+        <table><tr><th>${u('teach_student')}</th><th>${u('teach_status')}</th><th>${u('teach_choice')}</th><th>${u('teach_score')}</th></tr>
+        ${demo.map(([n, s, ch, sc]) => `<tr><td>${n}</td><td><span class="chip ${st[s][1]}">${u(st[s][0])}</span></td><td>${ch === null ? '—' : ch === 'own' ? u('own') : 'ABC'[ch]}</td><td>${sc ?? '—'}</td></tr>`).join('')}</table>
+        <button class="btn btn-l" style="margin-top:14px" id="tcsv">${ic('download')} ${u('export_csv')}</button></div>
+    </div>`;
+}
+
+function pageAbout() {
+  const accessIcons = ['monitor', 'qr', 'doc', 'cap', 'users'];
+  return `<div class="about-cards">
+      <div class="card pad"><h3>${ic('book')}${u('about_what')}</h3><p style="margin:0;color:var(--ink2)">${u('about_what_t')}</p></div>
+      <div class="card pad"><h3>${ic('target')}${u('about_goal')}</h3><p style="margin:0;color:var(--ink2)">${u('about_goal_t')}</p></div>
+      <div class="card pad"><h3>${ic('list')}${u('about_tasks')}</h3><ul class="ticks">${UI[LANG].tasks.map(x => `<li>${ic('check')}${x}</li>`).join('')}</ul></div>
+    </div>
+    <h2 class="sec-title">${u('access_title')}</h2>
+    <div class="access">${UI[LANG].access.map((x, i) => `<div class="card"><div class="ai">${ic(accessIcons[i])}</div>${x}</div>`).join('')}</div>
+    <div class="band">
+      <div>${ic('award')}${LANG === 'kz' ? 'Amanzholov University түпнұсқа контенті' : 'Оригинальный контент Amanzholov University'}</div>
+      <div>${ic('copy')}${LANG === 'kz' ? 'Жағдаяттық бейнематериалдарға авторлық құқықты тіркеу' : 'Регистрация авторских прав на ситуационные видеоматериалы'}</div>
+      <div>${ic('users')}${LANG === 'kz' ? 'Студенттерге, оқытушыларға, тәлімгерлерге және серіктес ұйымдарға' : 'Для студентов, преподавателей, наставников и организаций-партнёров'}</div>
+      <div>${ic('chart')}${LANG === 'kz' ? 'Педагогикалық білім сапасына үлес' : 'Вклад в качество педагогического образования'}</div>
+    </div>`;
+}
+
+/* ---------- экспорт ---------- */
+function downloadCSV(name, rows) {
+  const csv = '﻿' + rows.map(r => r.map(x => `"${String(x ?? '').replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ---------- роутер ---------- */
+function parse() {
+  const h = location.hash.replace(/^#\/?/, '') || 'home';
+  const [path, qs] = h.split('?');
+  const parts = path.split('/');
+  return { route: parts[0], a: parts[1], b: parts[2], q: new URLSearchParams(qs || '') };
+}
+function render() {
+  const { route, a, b, q } = parse();
+  document.documentElement.lang = LANG === 'kz' ? 'kk' : 'ru';
+  document.title = `E-book · ${u('hero_title')}`;
+  let page;
+  switch (route) {
+    case 'catalog': page = pageCatalog(q); break;
+    case 'case': page = pageCase(a, b || 'desc'); break;
+    case 'ai': page = pageAI(a); break;
+    case 'video': page = pageVideo(a); break;
+    case 'materials': page = pageMaterials(); break;
+    case 'profile': page = pageProfile(); break;
+    case 'teacher': page = pageTeacher(); break;
+    case 'about': page = pageAbout(); break;
+    default: page = pageHome();
+  }
+  $('#app').innerHTML = header(route) + `<main><div class="wrap">${page}</div></main>
+    <footer><div class="wrap">© 2026 ${u('uni')} · E-book «${u('hero_title')}» · ${u('proto')}</div></footer>` + tabbar(route);
+  bind(route, a, b);
+}
+
+function bind(route, a) {
+  document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { LANG = b.dataset.lang; store.set('lang', LANG); render(); });
+  const hs = $('#hsearch'); if (hs) hs.onsubmit = e => { e.preventDefault(); location.hash = '#/catalog?q=' + encodeURIComponent(hs.q.value); };
+  const cs = $('#csearch'); if (cs) cs.onsubmit = e => { e.preventDefault(); const p = parse().q; cs.q.value ? p.set('q', cs.q.value) : p.delete('q'); location.hash = '#/catalog?' + p; };
+  const lv = $('#lvl'); if (lv) lv.onchange = () => { const p = parse().q; lv.value ? p.set('lvl', lv.value) : p.delete('lvl'); location.hash = '#/catalog?' + p; };
+
+  if (route === 'case') {
+    const id = a;
+    const tb = $('.tabs'), on = $('.tabs a.on'); if (tb && on) tb.scrollLeft = on.offsetLeft - tb.clientWidth / 2 + on.clientWidth / 2;
+    const hint = () => { const h = $('#savehint'); if (h) { h.textContent = '✓ ' + u('saved'); clearTimeout(h._t); h._t = setTimeout(() => h.textContent = '', 1500); } };
+    document.querySelectorAll('[data-diag]').forEach(el => el.oninput = () => { const n = getNotes(id); n[el.dataset.diag] = el.value; store.set('diag.' + id, n); hint(); });
+    const rf = $('#refl'); if (rf) rf.oninput = () => { store.set('refl.' + id, rf.value); hint(); };
+    window._pick = window._pick || {}; window._pr = window._pr || {};
+    document.querySelectorAll('[data-opt]').forEach(el => el.onclick = () => {
+      const v = el.dataset.opt === 'own' ? 'own' : +el.dataset.opt;
+      const d = getDecision(id); if (d) { d.choice = v; store.set('dec.' + id, d); }
+      window._pick[id] = v; keepScroll(render); if (v === 'own') $('#own')?.focus();
+    });
+    document.querySelectorAll('[data-pr]').forEach(el => el.onclick = () => {
+      const d = getDecision(id); const arr = d ? d.pr : (window._pr[id] = window._pr[id] || []);
+      const i = arr.indexOf(el.dataset.pr); i < 0 ? arr.push(el.dataset.pr) : arr.splice(i, 1);
+      if (d) store.set('dec.' + id, d); el.classList.toggle('on');
+    });
+    const sv = $('#savedec'); if (sv) sv.onclick = () => {
+      const d = getDecision(id); const choice = d ? d.choice : window._pick[id];
+      if (choice === undefined || choice === null) { toast(u('sol_title')); return; }
+      store.set('dec.' + id, { choice, own: $('#own').value, just: $('#just').value, pr: d ? d.pr : (window._pr[id] || []), at: new Date().toISOString() });
+      toast(u('in_portfolio')); keepScroll(render);
+    };
+    const ul = $('#unlock'); if (ul) ul.onclick = () => { window._unlock = { ...(window._unlock || {}), [id]: true }; render(); };
+    const bm = $('#bm'); if (bm) bm.onclick = () => toggleBm(id);
+  }
+
+  if (route === 'ai') {
+    const box = $('#msgs'); box.scrollTop = box.scrollHeight;
+    $('#newchat').onclick = () => { chatInit(CHAT.caseId); render(); };
+    box.onclick = e => {
+      const p = e.target.closest('[data-pick]'); if (p) { location.hash = '#/ai/' + p.dataset.pick; return; }
+      const g = e.target.closest('[data-go]'); if (g) { location.hash = g.dataset.go; return; }
+      const r = e.target.closest('[data-report]'); if (r) { CHAT.msgs[+r.dataset.report].reported = true; store.set('chat', CHAT); toast(u('ai_reported')); render(); }
+    };
+    $('#compose').onsubmit = e => {
+      e.preventDefault(); const inp = $('#cinput'); const v = inp.value.trim(); if (!v) return;
+      const replies = askTutor(v); store.set('chat', CHAT); render();
+      const b2 = $('#msgs'); b2.insertAdjacentHTML('beforeend', `<div class="msg" id="typing"><div class="bot">${ic('bot')}</div><div class="bubble"><div class="typing"><i></i><i></i><i></i></div></div></div>`); b2.scrollTop = b2.scrollHeight;
+      setTimeout(() => { CHAT.msgs.push(...replies); store.set('chat', CHAT); render(); $('#cinput')?.focus(); }, 700);
+    };
+  }
+
+  if (route === 'profile') $('#csv').onclick = () => downloadCSV('portfolio.csv', [['case', 'title', 'choice', 'own', 'justification', 'principles', 'date'],
+    ...portfolio().map(({ c, d }) => [c.id, t(c.title), d.choice === 'own' ? 'own' : 'ABC'[d.choice], d.own, d.just, (d.pr || []).map(p => t(PRINCIPLES.find(x => x.id === p))).join(', '), d.at])]);
+  if (route === 'teacher') {
+    $('#assign').onclick = () => toast(u('teach_done'));
+    $('#tcsv').onclick = () => downloadCSV('group-results-demo.csv', [['student', 'status', 'choice', 'score'], ['Студент 01', 'done', 'B', 92], ['Студент 02', 'done', 'A', 74], ['Студент 03', 'progress', '', ''], ['Студент 04', 'done', 'own', 88], ['Студент 05', 'none', '', '']]);
+  }
+}
+function keepScroll(fn) { const y = scrollY; fn(); scrollTo(0, y); }
+
+let LAST = '';
+window.addEventListener('hashchange', () => { const { route, a } = parse(); const key = route + '/' + (a || ''); render(); if (key !== LAST) scrollTo(0, 0); LAST = key; });
+LAST = parse().route + '/' + (parse().a || '');
+render();
+
+</script>
+</body>
+</html>
