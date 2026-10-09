@@ -1,0 +1,9 @@
+# служебные файлы
+shots/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+node_modules/
