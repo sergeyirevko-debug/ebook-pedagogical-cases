@@ -2,12 +2,15 @@
 from pathlib import Path
 src = Path(__file__).parent / 'src'
 r = lambda n: (src / n).read_text(encoding='utf-8')
+import base64
+logo = base64.b64encode((Path(__file__).parent / 'assets' / 'logo.png').read_bytes()).decode()
 html = f'''<!doctype html>
 <html lang="kk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>E-book · Педагогикалық жағдаяттар банкі</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,{logo}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -17,8 +20,10 @@ html = f'''<!doctype html>
 <body>
 <div id="app"></div>
 <script>
+const LOGO = 'data:image/png;base64,{logo}';
 {r('i18n.js')}
 {r('data.js')}
+{r('auth.js')}
 {r('app.js')}
 </script>
 </body>

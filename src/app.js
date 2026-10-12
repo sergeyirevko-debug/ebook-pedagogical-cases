@@ -11,6 +11,11 @@ const store = {
 };
 
 let LANG = store.get('lang', 'kz');
+USER = store.get('user', null);
+/* данные пользователя хранятся отдельно для каждой учётной записи */
+const ukey = (k) => (USER ? USER.id : 'guest') + '.' + k;
+const uget = (k, d) => store.get(ukey(k), d);
+const uset = (k, v) => store.set(ukey(k), v);
 const t = (o) => (o && typeof o === 'object') ? (o[LANG] ?? o.ru) : o;
 const u = (k) => UI[LANG][k] ?? UI.ru[k] ?? k;
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -62,29 +67,32 @@ const grad = (h) => `background:linear-gradient(135deg,hsl(${h} 70% 62%),hsl(${(
 const catIcon = (c) => catById(c.cats[c.cats.length - 1])?.icon || 'cases';
 
 /* ---------- состояние пользователя ---------- */
-const getNotes = (id) => store.get('diag.' + id, {});
-const getDecision = (id) => store.get('dec.' + id, null);
+const getNotes = (id) => uget('diag.' + id, {});
+const getDecision = (id) => uget('dec.' + id, null);
 const portfolio = () => CASES.map(c => ({ c, d: getDecision(c.id) })).filter(x => x.d);
-const bookmarks = () => store.get('bm', []);
-function toggleBm(id) { const b = bookmarks(); const i = b.indexOf(id); i < 0 ? b.push(id) : b.splice(i, 1); store.set('bm', b); render(); }
+const bookmarks = () => uget('bm', []);
+function toggleBm(id) { const b = bookmarks(); const i = b.indexOf(id); i < 0 ? b.push(id) : b.splice(i, 1); uset('bm', b); render(); }
 function toast(msg) { const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2400); }
 
 /* ---------- шапка, навигация ---------- */
 function header(route) {
-  const items = [['home', 'nav_home'], ['about', 'nav_about'], ['catalog', 'nav_catalog'], ['video', 'nav_video'], ['ai', 'nav_ai'], ['materials', 'nav_materials'], ['teacher', 'nav_teacher']];
+  const items = [['home', 'nav_home'], ['about', 'nav_about'], ['catalog', 'nav_catalog'], ['video', 'nav_video'], ['ai', 'nav_ai'], ['materials', 'nav_materials']];
+  const roleNav = { teacher: ['teacher', 'nav_teacher'], methodist: ['editor', 'nav_editor'], expert: ['review', 'nav_review'], admin: ['admin', 'nav_admin'] }[USER?.role];
+  if (roleNav) items.push(roleNav);
   return `<header class="top"><div class="wrap bar1">
-    <a class="brand" href="#/home"><div class="logo">AU</div><small>${u('uni')}</small></a>
+    <a class="brand" href="#/home"><img class="logo-img" src="${LOGO}" alt="${u('uni')}"><small>${u('uni')}</small></a>
     <div class="tools">
       <span class="proto">${u('proto')}</span>
       <div class="lang" role="group" aria-label="Language">
         <button data-lang="kz" class="${LANG === 'kz' ? 'on' : ''}">ҚАЗ</button><button data-lang="ru" class="${LANG === 'ru' ? 'on' : ''}">РУС</button>
       </div>
-      <a class="iconbtn" href="#/profile" title="${u('prof_title')}">${ic('user')}</a>
+      ${USER ? `<a class="userchip" href="#/profile" title="${u('prof_title')}"><span class="avatar sm">${esc(USER.name.split(' ').map(w => w[0]).join('').slice(0, 2))}</span><span class="uc-txt"><b>${esc(USER.name)}</b><small>${t(ROLES[USER.role])}</small></span></a>`
+        : `<a class="btn btn-p btn-sm" id="hdr-login" href="#/login">${ic('user')} ${u('login')}</a>`}
     </div></div>
-    <div class="bar2"><nav class="wrap nav">${items.map(([r, k]) => `<a href="#/${r}" class="${route === r || (route === 'case' && r === 'catalog') ? 'on' : ''}">${u(k)}</a>`).join('')}</nav></div></header>`;
+    <div class="bar2"><nav class="wrap nav">${items.map(([r, k]) => `<a href="#/${r}" class="${route === r || (route === 'case' && r === 'catalog') ? 'on' : ''} ${roleNav && r === roleNav[0] ? 'rolelink' : ''}">${u(k)}</a>`).join('')}</nav></div></header>`;
 }
 function tabbar(route) {
-  const items = [['home', 'home', 'tab_home'], ['catalog', 'cases', 'tab_cases'], ['ai', 'bot', 'tab_ai'], ['video', 'video', 'tab_video'], ['profile', 'user', 'tab_profile']];
+  const items = [['home', 'home', 'tab_home'], ['catalog', 'cases', 'tab_cases'], ['ai', 'bot', 'tab_ai'], ['video', 'video', 'tab_video'], USER ? ['profile', 'user', 'tab_profile'] : ['login', 'user', 'login']];
   return `<nav class="tabbar">${items.map(([r, i, k]) => `<a href="#/${r}" class="${route === r || (route === 'case' && r === 'catalog') ? 'on' : ''}">${ic(i)}<span>${u(k)}</span></a>`).join('')}</nav>`;
 }
 
@@ -165,7 +173,9 @@ function pageCase(id, tab) {
   const bm = bookmarks().includes(id);
   const tabs = [['desc', 't_desc', false], ['analysis', 't_analysis', hasNotes], ['solutions', 't_solutions', !!dec], ['comment', 't_comment', false]];
   let body = '';
-  if (tab === 'analysis') {
+  if (tab !== 'desc' && !can('case_work')) {
+    body = pageNeedLogin(`#/case/${id}/${tab}`);
+  } else if (tab === 'analysis') {
     body = `<div><h3>${u('diag_title')}</h3><p class="muted" style="margin-top:-4px">${u('diag_hint')}</p>
       ${DIAG_FIELDS.map(f => `<div class="field"><label for="d_${f.id}">${t(f)}</label><textarea id="d_${f.id}" data-diag="${f.id}">${esc(notes[f.id] || '')}</textarea></div>`).join('')}
       <div class="savehint" id="savehint"></div>
@@ -190,7 +200,7 @@ function pageCase(id, tab) {
       body = `<div><h3>${u('expert_title')}</h3><div class="expert">${esc(t(c.expert))}</div>
         <div class="compare"><div class="box"><h4>${u('portfolio')}</h4>${esc(mine)}${dec?.just ? `<p class="muted" style="margin:6px 0 0">${esc(dec.just)}</p>` : ''}</div>
           <div class="box"><h4>${u('key_principles')}</h4><div class="pchips">${c.principles.map(p => `<span class="chip">${t(PRINCIPLES.find(x => x.id === p))}</span>`).join('')}</div></div></div>
-        <div class="field"><label>${u('reflection')}</label><textarea id="refl" data-refl placeholder="${u('reflection_ph')}">${esc(store.get('refl.' + id, ''))}</textarea></div>
+        <div class="field"><label>${u('reflection')}</label><textarea id="refl" data-refl placeholder="${u('reflection_ph')}">${esc(uget('refl.' + id, ''))}</textarea></div>
         <div class="savehint" id="savehint"></div></div>`;
     }
   } else {
@@ -206,7 +216,7 @@ function pageCase(id, tab) {
       <div class="case-head"><div><div class="code">${c.id}</div><h1>${esc(t(c.title))}</h1>
         <div class="row" style="display:flex;gap:6px;flex-wrap:wrap">${c.cats.map(k => `<span class="chip">${t(catById(k))}</span>`).join('')}<span class="chip">${c.grade} ${u('grade')}</span><span class="chip ${LEVELS[c.level].cls}">${u('level')}: ${t(LEVELS[c.level])}</span></div></div>
         <div class="case-img" style="${grad(c.hue)}">${ic(catIcon(c))}</div></div>
-      <nav class="tabs">${tabs.map(([k, l, d]) => `<a href="#/case/${id}/${k}" class="${tab === k ? 'on' : ''}">${u(l)}${d ? '<span class="dot"></span>' : ''}</a>`).join('')}</nav>
+      <nav class="tabs">${tabs.map(([k, l, d]) => `<a href="#/case/${id}/${k}" class="${tab === k ? 'on' : ''}">${u(l)}${d ? '<span class="dot"></span>' : ''}${k !== 'desc' && !can('case_work') ? ic('lock', 'tab-lock') : ''}</a>`).join('')}</nav>
       <div class="case-body">${body}${side}</div>
     </article>`;
 }
@@ -215,13 +225,13 @@ function pageCase(id, tab) {
    В продакшене askTutor() отправляет запрос на сервер:
    POST /api/tutor {caseId, history, lang} → LLM + RAG по методбазе
    с системной инструкцией «сократический тьютор» и экспертной картой кейса. */
-let CHAT = store.get('chat', null);
+let CHAT = uget('chat', null);
 function chatInit(caseId) {
   CHAT = { caseId: caseId || null, step: 0, msgs: [] };
   CHAT.msgs.push({ from: 'ai', kind: 'hello' });
   if (caseId) CHAT.msgs.push({ from: 'ai', kind: 'intro', step: 0 });
   else CHAT.msgs.push({ from: 'ai', kind: 'pick' });
-  store.set('chat', CHAT);
+  uset('chat', CHAT);
 }
 function redactPII(s) {
   let hit = false;
@@ -274,7 +284,7 @@ function pageAI(caseId) {
       ${c ? `<div style="margin-top:14px">${caseCard(c)}</div>` : ''}
     </aside>
     <section class="card chat">
-      <div class="chat-h"><div class="bot">${ic('bot')}</div><div><b>${u('ai_name')}</b><small>${u('ai_org')}${c ? ' · ' + c.id : ''}</small></div>
+      <div class="chat-h"><div class="bot">${ic('bot')}</div><div><b>${u('ai_name')}</b><small>${u('ai_org')}${c ? ' · ' + c.id : ''}</small><small class="pseud">${ic('lock')} ${u('pseud')}: <code>${pseudOf(USER.id)}</code></small></div>
         <button class="btn btn-o" id="newchat" style="margin-left:auto;padding:8px 12px;font-size:13px">${u('ai_reset')}</button></div>
       <div class="msgs" id="msgs">${CHAT.msgs.map((m, i) => m.from === 'me' ? `<div class="msg me"><div class="bubble">${esc(m.text)}</div></div>` : aiMsgHTML(m, i)).join('')}</div>
       <form class="compose" id="compose"><input id="cinput" autocomplete="off" placeholder="${u('ai_ph')}"><button class="send" aria-label="send">${ic('send')}</button></form>
@@ -312,14 +322,14 @@ function pageMaterials() {
 function pageProfile() {
   const pf = portfolio();
   const bm = bookmarks().map(caseById).filter(Boolean);
-  return `<h2 class="sec-title" style="margin-top:0">${u('prof_title')}</h2>
+  return `<h2 class="sec-title" style="margin-top:0">${u('prof_title')}</h2>${sessionCard()}
     <div class="grid3" style="margin-bottom:16px">
       <div class="card pad"><div class="muted">${u('progress')}</div><b style="font-size:30px;color:var(--blue-dd)">${pf.length} / ${CASES.length}</b>
         <div style="height:8px;background:var(--blue-l);border-radius:4px;margin-top:8px"><div style="height:8px;border-radius:4px;background:var(--blue);width:${pf.length / CASES.length * 100}%"></div></div></div>
       <div class="card pad"><div class="muted">${u('bookmarks')}</div><b style="font-size:30px;color:var(--blue-dd)">${bm.length}</b></div>
       <div class="card pad" style="display:flex;align-items:center"><button class="btn btn-l btn-block" id="csv">${ic('download')} ${u('export_csv')}</button></div>
     </div>
-    <div class="quicklinks">${[['materials', 'book', 'nav_materials'], ['teacher', 'teacher', 'nav_teacher'], ['about', 'list', 'nav_about']].map(([r, i, k]) => `<a class="card" href="#/${r}">${ic(i)}<span>${u(k)}</span>${ic('chev', 'muted')}</a>`).join('')}</div>
+    <div class="quicklinks">${[...(({ teacher: [['teacher', 'teacher', 'nav_teacher']], methodist: [['editor', 'doc', 'nav_editor']], expert: [['review', 'award', 'nav_review']], admin: [['admin', 'lock', 'nav_admin']] })[USER.role] || []), ['materials', 'book', 'nav_materials'], ['about', 'list', 'nav_about']].map(([r, i, k]) => `<a class="card" href="#/${r}">${ic(i)}<span>${u(k)}</span>${ic('chev', 'muted')}</a>`).join('')}</div>
     <div class="grid2">
       <div class="card pad"><h3 style="margin-bottom:12px">${u('portfolio')}</h3>
         ${pf.length ? `<table><tr><th>${u('nav_catalog')}</th><th>${u('teach_choice')}</th></tr>${pf.map(({ c, d }) => `<tr><td><a href="#/case/${c.id}/comment" style="color:var(--blue);font-weight:600">${c.id}</a> ${esc(t(c.title))}</td><td>${d.choice === 'own' ? u('own') : 'ABC'[d.choice] + ' · <span class="chip ' + OUTCOME[c.options[d.choice].oc].cls + '">' + t(OUTCOME[c.options[d.choice].oc]) + '</span>'}</td></tr>`).join('')}</table>` : `<p class="muted">${u('empty_portfolio')}</p>`}</div>
@@ -336,9 +346,9 @@ function pageTeacher() {
     <div class="grid2">
       <div class="card pad"><h3 style="margin-bottom:12px">${u('teach_assign')}</h3>
         ${CASES.map(x => `<label class="checkrow"><input type="checkbox" ${x.id === c.id ? 'checked' : ''}><b>${x.id}</b> ${esc(t(x.title))}<span class="chip ${LEVELS[x.level].cls}" style="margin-left:auto">${t(LEVELS[x.level])}</span></label>`).join('')}
-        <div class="formrow"><select aria-label="${u('teach_group')}"><option>${u('teach_group')}: ПО-21</option><option>${u('teach_group')}: ПО-22</option></select><input type="date" aria-label="${u('teach_deadline')}"></div>
+        <div class="formrow"><select aria-label="${u('teach_group')}">${(USER.groups || []).map(g => `<option>${u('teach_group')}: ${g}</option>`).join('')}</select><input type="date" aria-label="${u('teach_deadline')}"></div>
         <button class="btn btn-p" id="assign">${u('teach_btn')}</button></div>
-      <div class="card pad"><h3 style="margin-bottom:12px">${u('teach_results')} · ${c.id}</h3>
+      <div class="card pad"><h3 style="margin-bottom:4px">${u('teach_results')} · ${c.id}</h3><p class="note-line" style="margin:0 0 10px">${ic('lock')} ${u('teach_own')}: ${(USER.groups || []).join(', ')}</p>
         <table><tr><th>${u('teach_student')}</th><th>${u('teach_status')}</th><th>${u('teach_choice')}</th><th>${u('teach_score')}</th></tr>
         ${demo.map(([n, s, ch, sc]) => `<tr><td>${n}</td><td><span class="chip ${st[s][1]}">${u(st[s][0])}</span></td><td>${ch === null ? '—' : ch === 'own' ? u('own') : 'ABC'[ch]}</td><td>${sc ?? '—'}</td></tr>`).join('')}</table>
         <button class="btn btn-l" style="margin-top:14px" id="tcsv">${ic('download')} ${u('export_csv')}</button></div>
@@ -382,7 +392,16 @@ function render() {
   document.documentElement.lang = LANG === 'kz' ? 'kk' : 'ru';
   document.title = `E-book · ${u('hero_title')}`;
   let page;
-  switch (route) {
+  const need = routeNeed(route, b);
+  if (USER && route !== 'login' && !store.get('consent.' + USER.id, null)) { LOGIN.step = 'consent'; location.hash = '#/login'; return; }
+  if (route === 'login' && USER && LOGIN.step !== 'consent') { location.hash = '#/' + ROLES[USER.role].home; return; }
+  if (need && route !== 'case' && !USER) page = pageNeedLogin(location.hash);
+  else if (need && route !== 'case' && !can(need)) page = pageDenied(need);
+  else switch (route) {
+    case 'login': page = pageLogin(); break;
+    case 'editor': page = pageEditor(); break;
+    case 'review': page = pageReview(); break;
+    case 'admin': page = pageAdmin(); break;
     case 'catalog': page = pageCatalog(q); break;
     case 'case': page = pageCase(a, b || 'desc'); break;
     case 'ai': page = pageAI(a); break;
@@ -396,6 +415,7 @@ function render() {
   $('#app').innerHTML = header(route) + `<main><div class="wrap">${page}</div></main>
     <footer><div class="wrap">© 2026 ${u('uni')} · E-book «${u('hero_title')}» · ${u('proto')}</div></footer>` + tabbar(route);
   bind(route, a, b);
+  bindAuth(route);
 }
 
 function bind(route, a) {
@@ -408,50 +428,54 @@ function bind(route, a) {
     const id = a;
     const tb = $('.tabs'), on = $('.tabs a.on'); if (tb && on) tb.scrollLeft = on.offsetLeft - tb.clientWidth / 2 + on.clientWidth / 2;
     const hint = () => { const h = $('#savehint'); if (h) { h.textContent = '✓ ' + u('saved'); clearTimeout(h._t); h._t = setTimeout(() => h.textContent = '', 1500); } };
-    document.querySelectorAll('[data-diag]').forEach(el => el.oninput = () => { const n = getNotes(id); n[el.dataset.diag] = el.value; store.set('diag.' + id, n); hint(); });
-    const rf = $('#refl'); if (rf) rf.oninput = () => { store.set('refl.' + id, rf.value); hint(); };
+    document.querySelectorAll('[data-diag]').forEach(el => el.oninput = () => { const n = getNotes(id); n[el.dataset.diag] = el.value; uset('diag.' + id, n); hint(); });
+    const rf = $('#refl'); if (rf) rf.oninput = () => { uset('refl.' + id, rf.value); hint(); };
     window._pick = window._pick || {}; window._pr = window._pr || {};
     document.querySelectorAll('[data-opt]').forEach(el => el.onclick = () => {
       const v = el.dataset.opt === 'own' ? 'own' : +el.dataset.opt;
-      const d = getDecision(id); if (d) { d.choice = v; store.set('dec.' + id, d); }
+      const d = getDecision(id); if (d) { d.choice = v; uset('dec.' + id, d); }
       window._pick[id] = v; keepScroll(render); if (v === 'own') $('#own')?.focus();
     });
     document.querySelectorAll('[data-pr]').forEach(el => el.onclick = () => {
       const d = getDecision(id); const arr = d ? d.pr : (window._pr[id] = window._pr[id] || []);
       const i = arr.indexOf(el.dataset.pr); i < 0 ? arr.push(el.dataset.pr) : arr.splice(i, 1);
-      if (d) store.set('dec.' + id, d); el.classList.toggle('on');
+      if (d) uset('dec.' + id, d); el.classList.toggle('on');
     });
     const sv = $('#savedec'); if (sv) sv.onclick = () => {
       const d = getDecision(id); const choice = d ? d.choice : window._pick[id];
       if (choice === undefined || choice === null) { toast(u('sol_title')); return; }
-      store.set('dec.' + id, { choice, own: $('#own').value, just: $('#just').value, pr: d ? d.pr : (window._pr[id] || []), at: new Date().toISOString() });
+      uset('dec.' + id, { choice, own: $('#own').value, just: $('#just').value, pr: d ? d.pr : (window._pr[id] || []), at: new Date().toISOString() });
       toast(u('in_portfolio')); keepScroll(render);
     };
     const ul = $('#unlock'); if (ul) ul.onclick = () => { window._unlock = { ...(window._unlock || {}), [id]: true }; render(); };
     const bm = $('#bm'); if (bm) bm.onclick = () => toggleBm(id);
   }
 
-  if (route === 'ai') {
+  if (route === 'ai' && can('ai')) {
     const box = $('#msgs'); box.scrollTop = box.scrollHeight;
     $('#newchat').onclick = () => { chatInit(CHAT.caseId); render(); };
     box.onclick = e => {
       const p = e.target.closest('[data-pick]'); if (p) { location.hash = '#/ai/' + p.dataset.pick; return; }
       const g = e.target.closest('[data-go]'); if (g) { location.hash = g.dataset.go; return; }
-      const r = e.target.closest('[data-report]'); if (r) { CHAT.msgs[+r.dataset.report].reported = true; store.set('chat', CHAT); toast(u('ai_reported')); render(); }
+      const r = e.target.closest('[data-report]'); if (r) {
+        const m = CHAT.msgs[+r.dataset.report]; if (m.reported) return; m.reported = true; uset('chat', CHAT);
+        const txt = (r.closest('.bubble')?.firstChild?.textContent || '').trim().slice(0, 140);
+        const q = store.get('reports', []); q.unshift({ caseId: CHAT.caseId, who: pseudOf(USER.id), text: txt, at: new Date().toISOString() }); store.set('reports', q.slice(0, 30));
+        audit('a_report', CHAT.caseId || ''); toast(u('ai_reported')); render(); }
     };
     $('#compose').onsubmit = e => {
       e.preventDefault(); const inp = $('#cinput'); const v = inp.value.trim(); if (!v) return;
-      const replies = askTutor(v); store.set('chat', CHAT); render();
+      const replies = askTutor(v); uset('chat', CHAT); render();
       const b2 = $('#msgs'); b2.insertAdjacentHTML('beforeend', `<div class="msg" id="typing"><div class="bot">${ic('bot')}</div><div class="bubble"><div class="typing"><i></i><i></i><i></i></div></div></div>`); b2.scrollTop = b2.scrollHeight;
-      setTimeout(() => { CHAT.msgs.push(...replies); store.set('chat', CHAT); render(); $('#cinput')?.focus(); }, 700);
+      setTimeout(() => { CHAT.msgs.push(...replies); uset('chat', CHAT); render(); $('#cinput')?.focus(); }, 700);
     };
   }
 
-  if (route === 'profile') $('#csv').onclick = () => downloadCSV('portfolio.csv', [['case', 'title', 'choice', 'own', 'justification', 'principles', 'date'],
+  if (route === 'profile' && USER) $('#csv').onclick = () => audit('a_export', 'portfolio') || downloadCSV('portfolio.csv', [['case', 'title', 'choice', 'own', 'justification', 'principles', 'date'],
     ...portfolio().map(({ c, d }) => [c.id, t(c.title), d.choice === 'own' ? 'own' : 'ABC'[d.choice], d.own, d.just, (d.pr || []).map(p => t(PRINCIPLES.find(x => x.id === p))).join(', '), d.at])]);
-  if (route === 'teacher') {
-    $('#assign').onclick = () => toast(u('teach_done'));
-    $('#tcsv').onclick = () => downloadCSV('group-results-demo.csv', [['student', 'status', 'choice', 'score'], ['Студент 01', 'done', 'B', 92], ['Студент 02', 'done', 'A', 74], ['Студент 03', 'progress', '', ''], ['Студент 04', 'done', 'own', 88], ['Студент 05', 'none', '', '']]);
+  if (route === 'teacher' && can('teacher')) {
+    $('#assign').onclick = () => { audit('a_assign', CASES.filter((x, i) => document.querySelectorAll('.checkrow input')[i]?.checked).map(x => x.id).join(', ')); toast(u('teach_done')); };
+    $('#tcsv').onclick = () => audit('a_export', 'group-results') || downloadCSV('group-results-demo.csv', [['student', 'status', 'choice', 'score'], ['Студент 01', 'done', 'B', 92], ['Студент 02', 'done', 'A', 74], ['Студент 03', 'progress', '', ''], ['Студент 04', 'done', 'own', 88], ['Студент 05', 'none', '', '']]);
   }
 }
 function keepScroll(fn) { const y = scrollY; fn(); scrollTo(0, y); }
