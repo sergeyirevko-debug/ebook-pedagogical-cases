@@ -355,3 +355,28 @@ td select{border:1px solid var(--line);border-radius:8px;padding:6px 8px;backgro
 .logo-img{height:46px;width:auto;flex:none;display:block}
 .auth-logo .logo-img{height:52px}
 @media (max-width:860px){.bar1 .logo-img{height:40px}}
+
+/* вход по собственным учётным записям */
+.auth-form{display:grid;gap:12px}
+.auth-form label{display:grid;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink2)}
+.form-err{margin:0;color:var(--weak);font-size:13.5px;font-weight:600}
+.auth-links{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:12px 0 4px;font-size:13.5px}
+.auth-links a{color:var(--blue);font-weight:600}
+.demo-box{border:1.5px dashed var(--line);border-radius:12px;padding:12px 14px;margin:12px 0 6px}
+.demo-box b{font-size:13px;color:var(--ink2)}
+.demo-box small{display:block;color:var(--ink3);font-size:12px;margin-top:8px}
+.demo-roles{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.demo-roles .pchip{font-size:12.5px;padding:5px 10px}
+.demo-roles .pchip:hover{border-color:var(--blue);color:var(--blue)}
+.code-in.act{letter-spacing:6px;font-size:24px;text-transform:uppercase}
+.pw-rules{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.pw-rules li{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink3)}
+.pw-rules li .ico{width:16px;height:16px;opacity:.4}
+.pw-rules li.ok{color:var(--good)}
+.pw-rules li.ok .ico{opacity:1}
+
+/* AI-тьютор: живые ответы модели */
+.ai-tag{display:inline-block;padding:1px 7px;margin:0 2px;border-radius:999px;background:var(--blue-l);color:var(--blue);font-size:11.5px;font-weight:700;vertical-align:1px}
+.ai-note{display:block;color:var(--ink3);font-size:13px;margin:6px 0 0}
+.bubble [data-live] .typing{margin-bottom:6px}
+.compose input:disabled{opacity:.6}

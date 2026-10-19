@@ -7,3 +7,8 @@ Thumbs.db
 .vscode/
 .idea/
 node_modules/
+
+# AI-тьютор: базы и локальные файлы
+*.db
+server/tutor-local.db
+*.gguf

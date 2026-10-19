@@ -1,9 +1,9 @@
 /* ============================================================
    АВТОРИЗАЦИЯ (демо) / АВТОРИЗАЦИЯ (демо)
-   Имитирует целевую схему: вход через сервер авторизации
-   университета (Keycloak: SSO / LMS LTI 1.3 / приглашение),
-   второй фактор для сотрудников, согласие на обработку ПД,
-   ролевой доступ и журнал действий.
+   Имитирует целевую схему: собственные учётные записи e-book
+   (без входа через сторонние сервисы) — импорт списков групп,
+   коды активации, e-mail + пароль, второй фактор для сотрудников,
+   согласие на обработку ПД, ролевой доступ и журнал действий.
    В продакшене всё это делает сервер; здесь — только интерфейс.
    ============================================================ */
 
@@ -26,16 +26,15 @@ const ROLES = {
                d: { ru: 'По приглашению, доступ ограничен сроком', kz: 'Шақыру бойынша, мерзімі шектеулі' } },
 };
 
-/* Демо-учётные записи (вымышленные) */
+/* Демо-учётные записи (вымышленные). Источник: импорт списка группы, создание администратором, приглашение */
 const DEMO_USERS = {
-  student:   { id: 'u-s01', name: 'Айдана Серикова',  src: 'sso',    group: 'ПО-21' },
-  teacher:   { id: 'u-t01', name: 'Ерлан Касымов',    src: 'sso',    groups: ['ПО-21', 'ПО-22'] },
-  methodist: { id: 'u-m01', name: 'Гульнара Ахметова', src: 'sso' },
-  expert:    { id: 'u-e01', name: 'Марат Жунусов',    src: 'sso' },
-  admin:     { id: 'u-a01', name: 'IT-администратор', src: 'sso' },
-  mentor:    { id: 'u-x01', name: 'Сауле Нурланова',  src: 'invite', org: 'СШ № 12', until: '2027-06-30' },
+  student:   { id: 'u-s01', name: 'Айдана Серикова',   email: 'student@ebook.demo',   src: 'import', group: 'ПО-21' },
+  teacher:   { id: 'u-t01', name: 'Ерлан Касымов',     email: 'teacher@ebook.demo',   src: 'admin',  groups: ['ПО-21', 'ПО-22'] },
+  methodist: { id: 'u-m01', name: 'Гульнара Ахметова', email: 'methodist@ebook.demo', src: 'admin' },
+  expert:    { id: 'u-e01', name: 'Марат Жунусов',     email: 'expert@ebook.demo',    src: 'admin' },
+  admin:     { id: 'u-a01', name: 'IT-администратор',  email: 'admin@ebook.demo',     src: 'admin' },
+  mentor:    { id: 'u-x01', name: 'Сауле Нурланова',   email: 'mentor@ebook.demo',    src: 'invite', org: 'СШ № 12', until: '2027-06-30' },
 };
-
 /* Права: что разрешено каждой роли */
 const PERMS = {
   case_work: ['student', 'teacher', 'methodist', 'expert', 'admin', 'mentor'],
@@ -140,9 +139,53 @@ Object.assign(UI.kz, {
   teach_own: 'Тек сіздің топтарыңыз', user_col: 'Пайдаланушы', role_changed: 'Рөл өзгертілді (демо).',
 });
 
+
+Object.assign(UI.ru, {
+  login_sub: 'Учётную запись выдаёт преподаватель или администратор e-book', email_label: 'E-mail', pw_label: 'Пароль', sign_in: 'Войти',
+  forgot: 'Забыли пароль?', activate_link: 'Активировать учётную запись',
+  no_pw: 'Вход только по учётной записи e-book — сторонние сервисы не используются. Пароли хранятся в виде стойкого хеша (Argon2id).',
+  demo_quick: 'Демо: быстрый вход под ролью', demo_hint: 'или введите, например, student@ebook.demo и любой пароль',
+  bad_login: 'Неверный e-mail или пароль. Осталось попыток:', locked: 'Слишком много попыток. Вход временно заблокирован на 15 минут.',
+  act_title: 'Активация учётной записи', act_text: 'Введите код активации из письма-приглашения или полученный от преподавателя. Код одноразовый и действует 7 дней.',
+  act_demo: 'Демо: STUD-2026 — студент, MENT-2026 — наставник', act_bad: 'Код не найден или срок его действия истёк', next_btn: 'Далее',
+  setpw_title: 'Придумайте пароль', pw_repeat: 'Повторите пароль', pw_rules: ['Не короче 10 символов', 'Есть буквы и цифры', 'Пароли совпадают'], pw_save: 'Сохранить и войти',
+  forgot_title: 'Восстановление пароля', forgot_text: 'Введите e-mail учётной записи — мы отправим ссылку для смены пароля.', send_link: 'Отправить ссылку',
+  sent_title: 'Проверьте почту', sent_text: 'Если такой адрес есть в системе, на него отправлена ссылка для смены пароля. Ссылка действует 30 минут.',
+  no_mail: 'Нет доступа к почте? Обратитесь к преподавателю или администратору — они выдадут новый код активации.', back_login: 'Вернуться ко входу',
+  src_import: 'Импорт списка группы', src_admin: 'Создан администратором', src_invite: 'Приглашение преподавателя', src_code: 'Код активации',
+  acc_title: 'Учётные записи группы', acc_import: 'Импорт списка (Excel/CSV)', acc_codes: 'Выдать коды активации',
+  acc_note: 'Список группы загружает преподаватель: ФИО и e-mail (если есть). Студенты без e-mail получают код активации на занятии.',
+  acc_on: 'Активирован', acc_wait: 'Ожидает активации', acc_reset: 'Новый код', acc_code_col: 'Код',
+  acc_imported: 'Демо: в рабочей системе откроется загрузка файла со списком группы.', acc_codes_done: 'Коды сформированы — распечатайте и раздайте студентам (демо).',
+  a_import: 'Импорт списка группы', a_codes: 'Выданы коды активации', a_reset: 'Новый код для студента', a_activate: 'Активация учётной записи',
+  a_fail: 'Неудачная попытка входа', a_pwreset: 'Запрос смены пароля',
+});
+Object.assign(UI.kz, {
+  login_sub: 'Есептік жазбаны оқытушы немесе e-book әкімшісі береді', email_label: 'E-mail', pw_label: 'Құпиясөз', sign_in: 'Кіру',
+  forgot: 'Құпиясөзді ұмыттыңыз ба?', activate_link: 'Есептік жазбаны белсендіру',
+  no_pw: 'Кіру тек e-book есептік жазбасы арқылы — бөгде сервистер қолданылмайды. Құпиясөздер берік хеш (Argon2id) түрінде сақталады.',
+  demo_quick: 'Демо: рөл бойынша жылдам кіру', demo_hint: 'немесе, мысалы, student@ebook.demo және кез келген құпиясөзді енгізіңіз',
+  bad_login: 'E-mail немесе құпиясөз қате. Қалған әрекеттер:', locked: 'Әрекеттер тым көп. Кіру 15 минутқа уақытша бұғатталды.',
+  act_title: 'Есептік жазбаны белсендіру', act_text: 'Шақыру хаттағы немесе оқытушыдан алған белсендіру кодын енгізіңіз. Код бір реттік, 7 күн жарамды.',
+  act_demo: 'Демо: STUD-2026 — студент, MENT-2026 — тәлімгер', act_bad: 'Код табылмады немесе мерзімі өтті', next_btn: 'Әрі қарай',
+  setpw_title: 'Құпиясөз ойлап табыңыз', pw_repeat: 'Құпиясөзді қайталаңыз', pw_rules: ['Кемінде 10 таңба', 'Әріптер мен цифрлар бар', 'Құпиясөздер сәйкес келеді'], pw_save: 'Сақтау және кіру',
+  forgot_title: 'Құпиясөзді қалпына келтіру', forgot_text: 'Есептік жазбаның e-mail-ін енгізіңіз — құпиясөзді ауыстыру сілтемесін жібереміз.', send_link: 'Сілтеме жіберу',
+  sent_title: 'Поштаңызды тексеріңіз', sent_text: 'Егер мұндай мекенжай жүйеде болса, оған құпиясөзді ауыстыру сілтемесі жіберілді. Сілтеме 30 минут жарамды.',
+  no_mail: 'Поштаға қолжетімділік жоқ па? Оқытушыға немесе әкімшіге хабарласыңыз — олар жаңа белсендіру кодын береді.', back_login: 'Кіруге оралу',
+  src_import: 'Топ тізімін импорттау', src_admin: 'Әкімші жасаған', src_invite: 'Оқытушының шақыруы', src_code: 'Белсендіру коды',
+  acc_title: 'Топтың есептік жазбалары', acc_import: 'Тізімді импорттау (Excel/CSV)', acc_codes: 'Белсендіру кодтарын беру',
+  acc_note: 'Топ тізімін оқытушы жүктейді: аты-жөні және e-mail (бар болса). E-mail-і жоқ студенттер белсендіру кодын сабақта алады.',
+  acc_on: 'Белсендірілген', acc_wait: 'Белсендіруді күтуде', acc_reset: 'Жаңа код', acc_code_col: 'Код',
+  acc_imported: 'Демо: нақты жүйеде топ тізімі бар файлды жүктеу ашылады.', acc_codes_done: 'Кодтар жасалды — басып шығарып, студенттерге таратыңыз (демо).',
+  a_import: 'Топ тізімі импортталды', a_codes: 'Белсендіру кодтары берілді', a_reset: 'Студентке жаңа код', a_activate: 'Есептік жазба белсендірілді',
+  a_fail: 'Сәтсіз кіру әрекеті', a_pwreset: 'Құпиясөзді ауыстыру сұрауы',
+});
+const SRC_LABEL = (k) => u('src_' + k);
+
 /* ---------- вход / выход ---------- */
 function startLogin(next) { LOGIN = { step: 'start', next: next || LOGIN.next || '' }; }
 function finishLogin(role, src) {
+  LOGIN.err = ''; LOGIN.fails = 0;
   USER = { ...DEMO_USERS[role], role, src: src || DEMO_USERS[role].src, mfa: ROLES[role].mfa, at: new Date().toISOString() };
   store.set('user', USER);
   CHAT = uget('chat', null);
@@ -168,32 +211,41 @@ function pageLogin() {
   const s = LOGIN.step;
   let body = '';
   if (s === 'start') {
+    const err = LOGIN.err ? `<p class="form-err">${LOGIN.err}</p>` : '';
     body = `<h1 class="auth-h">${u('login_title')}</h1><p class="muted">${u('login_sub')}</p>
-      <button class="auth-opt primary" data-auth="sso">${ic('lock')}<span><b>${u('sso_btn')}</b><small>${u('sso_note')}</small></span>${ic('chev')}</button>
-      <button class="auth-opt" data-auth="lms">${ic('cap')}<span><b>${u('lms_btn')}</b><small>${u('lms_note')}</small></span>${ic('chev')}</button>
-      <button class="auth-opt" data-auth="invite">${ic('users')}<span><b>${u('inv_btn')}</b></span>${ic('chev')}</button>
+      <form id="loginf" class="auth-form" novalidate>
+        <label>${u('email_label')}<input class="text-in" id="lemail" type="email" autocomplete="username" value="${esc(LOGIN.email || '')}"></label>
+        <label>${u('pw_label')}<input class="text-in" id="lpw" type="password" autocomplete="current-password"></label>
+        ${err}<button class="btn btn-p btn-block" ${LOGIN.locked ? 'disabled' : ''}>${u('sign_in')}</button></form>
+      <div class="auth-links"><a href="#/login" data-auth="forgot">${u('forgot')}</a><a href="#/login" data-auth="activate">${u('activate_link')}</a></div>
       <div class="auth-info">${ic('lock')}<span>${u('no_pw')}</span></div>
+      <div class="demo-box"><b>${u('demo_quick')}</b><div class="demo-roles">${Object.keys(ROLES).map(r => `<button class="pchip" data-role="${r}">${t(ROLES[r])}${ROLES[r].mfa ? ' · 2FA' : ''}</button>`).join('')}</div><small>${u('demo_hint')}</small></div>
       <a class="auth-guest" href="#/home" data-auth="guest">${u('guest_btn')}</a>`;
-  } else if (s === 'pick') {
-    const roles = Object.keys(ROLES).filter(r => r !== 'mentor');
-    body = `<button class="auth-back" data-auth="back">← ${u('back')}</button>
-      <h1 class="auth-h">${u('pick_title')}</h1><p class="muted">${u('pick_note')}</p>
-      <div class="role-grid">${roles.map(r => `<button class="role-card" data-role="${r}">${ic(ROLES[r].icon)}<b>${t(ROLES[r])}</b><small>${esc(DEMO_USERS[r].name)}</small><em>${t(ROLES[r].d)}</em>${ROLES[r].mfa ? '<span class="chip">2FA</span>' : ''}</button>`).join('')}</div>`;
   } else if (s === 'mfa') {
     body = `<button class="auth-back" data-auth="back">← ${u('back')}</button>
       <div class="auth-badge">${ic('lock')}</div><h1 class="auth-h">${u('mfa_title')}</h1><p class="muted">${u('mfa_text')}</p>
       <form id="mfaf"><input class="code-in" id="mfa" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" aria-label="${u('mfa_title')}">
       <p class="hint">${u('mfa_demo')}</p><button class="btn btn-p btn-block">${u('confirm')}</button></form>`;
-  } else if (s === 'invite') {
+  } else if (s === 'activate') {
     body = `<button class="auth-back" data-auth="back">← ${u('back')}</button>
-      <h1 class="auth-h">${u('inv_title')}</h1><p class="muted">${u('inv_text')}</p>
-      <form id="invf"><input class="text-in" id="email" type="email" placeholder="name@school.kz" value="${esc(LOGIN.email || '')}" aria-label="E-mail">
-      <button class="btn btn-p btn-block" style="margin-top:12px">${u('get_code')}</button></form>`;
-  } else if (s === 'code') {
+      <div class="auth-badge">${ic('users')}</div><h1 class="auth-h">${u('act_title')}</h1><p class="muted">${u('act_text')}</p>
+      <form id="actf"><input class="code-in act" id="actcode" maxlength="9" placeholder="XXXX-0000" autocomplete="one-time-code" aria-label="${u('act_title')}">
+      <p class="hint">${u('act_demo')}</p><button class="btn btn-p btn-block">${u('next_btn')}</button></form>`;
+  } else if (s === 'setpw') {
+    body = `<h1 class="auth-h">${u('setpw_title')}</h1><p class="muted">${esc(DEMO_USERS[LOGIN.actRole].name)} · ${t(ROLES[LOGIN.actRole])}</p>
+      <form id="pwf" class="auth-form"><label>${u('pw_label')}<input class="text-in" id="pw1" type="password" autocomplete="new-password"></label>
+      <label>${u('pw_repeat')}<input class="text-in" id="pw2" type="password" autocomplete="new-password"></label>
+      <ul class="pw-rules">${UI[LANG].pw_rules.map((r, i) => `<li data-rule="${i}">${ic('check')}${r}</li>`).join('')}</ul>
+      <button class="btn btn-p btn-block" id="pwsave" disabled>${u('pw_save')}</button></form>`;
+  } else if (s === 'forgot') {
     body = `<button class="auth-back" data-auth="back">← ${u('back')}</button>
-      <h1 class="auth-h">${u('inv_title')}</h1><p class="muted">${u('code_sent')} <b>${esc(LOGIN.email)}</b></p>
-      <form id="codef"><input class="code-in" id="otp" inputmode="numeric" maxlength="6" placeholder="••••••" aria-label="code">
-      <p class="hint">${u('mfa_demo')}</p><button class="btn btn-p btn-block">${u('confirm')}</button></form>`;
+      <h1 class="auth-h">${u('forgot_title')}</h1><p class="muted">${u('forgot_text')}</p>
+      <form id="fgf"><input class="text-in" id="fgemail" type="email" placeholder="name@example.kz" aria-label="E-mail">
+      <button class="btn btn-p btn-block" style="margin-top:12px">${u('send_link')}</button></form>
+      <p class="hint" style="margin-top:14px">${u('no_mail')}</p>`;
+  } else if (s === 'sent') {
+    body = `<div class="auth-badge">${ic('check')}</div><h1 class="auth-h">${u('sent_title')}</h1><p class="muted">${u('sent_text')}</p>
+      <p class="hint">${u('no_mail')}</p><button class="btn btn-o btn-block" data-auth="back">${u('back_login')}</button>`;
   } else if (s === 'consent') {
     body = `<div class="auth-badge">${ic('doc')}</div><h1 class="auth-h">${u('consent_title')}</h1>
       <ul class="ticks consent">${UI[LANG].consent_items.map(x => `<li>${ic('check')}${x}</li>`).join('')}</ul>
@@ -231,8 +283,19 @@ function pageEditor() {
     ${rows.map(r => `<tr><td><b>${r.id}</b></td><td>${esc(t(r.title))}</td><td>ҚАЗ · РУС</td><td>${stChip(r.st)}</td><td style="text-align:right"><button class="btn btn-o btn-sm" data-cms>${u('edit')}</button></td></tr>`).join('')}</table></div>`;
 }
 
+/* Жалобы на ответы AI: с сервера тьютора (общая очередь, GET /api/tutor/reports), без сервера — из браузера (демо). */
+let SRV_REPORTS = null;
+function loadSrvReports() {
+  if (!tutorLive()) return;
+  tutorFetch('/reports').then(r => r.ok ? r.json() : null).then(list => {
+    if (!list) return;
+    SRV_REPORTS = list.map(x => ({ id: x.id, caseId: x.caseId, who: x.who, text: (x.reply || '').slice(0, 160), at: x.at * 1000 }));
+    if (location.hash.startsWith('#/review')) render();
+  }).catch(() => {});
+}
 function pageReview() {
-  const reports = store.get('reports', []);
+  if (SRV_REPORTS === null) { SRV_REPORTS = undefined; loadSrvReports(); }
+  const reports = SRV_REPORTS || store.get('reports', []);
   return `<h2 class="sec-title" style="margin-top:0">${u('nav_review')}</h2>
     <div class="grid2">
       <div class="card pad"><h3 style="margin-bottom:12px">${u('review_cases')}</h3>
@@ -246,14 +309,13 @@ function pageReview() {
 
 function pageAdmin() {
   const log = store.get('audit', []);
-  const src = { sso: u('src_sso'), lms: u('src_lms'), invite: u('src_invite') };
   return `<h2 class="sec-title" style="margin-top:0">${u('nav_admin')}</h2>
     <p class="note-line">${ic('lock')} ${u('admin_note')}</p>
     <div class="card pad" style="margin-bottom:16px"><h3 style="margin-bottom:12px">${u('admin_users')}</h3>
       <div class="tscroll"><table><tr><th>${u('user_col')}</th><th>${u('role_col')}</th><th>${u('source')}</th><th>2FA</th></tr>
       ${Object.entries(DEMO_USERS).map(([r, d]) => `<tr><td><b>${esc(d.name)}</b><div class="muted" style="font-size:12px">${d.id}</div></td>
         <td><select data-setrole="${d.id}" aria-label="${u('role_col')}">${Object.keys(ROLES).map(k => `<option value="${k}" ${k === r ? 'selected' : ''}>${t(ROLES[k])}</option>`).join('')}</select></td>
-        <td>${src[d.src]}</td><td>${ROLES[r].mfa ? '✓' : '—'}</td></tr>`).join('')}</table></div></div>
+        <td>${SRC_LABEL(d.src)}</td><td>${ROLES[r].mfa ? '✓' : '—'}</td></tr>`).join('')}</table></div></div>
     <div class="card pad"><h3 style="margin-bottom:12px">${u('audit_title')}</h3>
       ${log.length ? `<div class="tscroll"><table><tr><th>${u('when')}</th><th>${u('who')}</th><th>${u('role_col')}</th><th>${u('action')}</th></tr>
       ${log.slice(0, 25).map(e => `<tr><td>${new Date(e.at).toLocaleString('ru-RU')}</td><td><code>${e.who}</code></td><td>${e.role === 'guest' ? '—' : t(ROLES[e.role])}</td><td>${u(e.action)}${e.extra ? ' · ' + esc(e.extra) : ''}</td></tr>`).join('')}</table></div>` : `<p class="muted">${u('audit_empty')}</p>`}</div>`;
@@ -262,7 +324,7 @@ function pageAdmin() {
 /* Блок «Сессия» для профиля */
 function sessionCard() {
   const r = ROLES[USER.role];
-  const src = { sso: u('src_sso'), lms: u('src_lms'), invite: u('src_invite') }[USER.src];
+  const src = SRC_LABEL(USER.src);
   const cons = store.get('consent.' + USER.id, null);
   return `<div class="card pad sess">
     <div class="sess-top"><div class="avatar">${esc(USER.name.split(' ').map(w => w[0]).join('').slice(0, 2))}</div>
@@ -287,13 +349,18 @@ function bindAuth(route) {
 
   if (route === 'profile' && USER) {
     $('#logout').onclick = () => logout();
-    $('#withdraw').onclick = () => { audit('a_withdraw'); store.set('consent.' + USER.id, null); toast(u('withdrawn')); logout(); };
+    $('#withdraw').onclick = () => { audit('a_withdraw'); store.set('consent.' + USER.id, null);
+      /* отзыв согласия на сервере тьютора: удаляет сохранённые диалоги, обезличивает жалобы */
+      if (tutorLive()) fetch(TUTOR.api.replace(/\/tutor$/, '/consent'), { method: 'DELETE', credentials: 'same-origin', headers: tutorHeaders() }).catch(() => {});
+      toast(u('withdrawn')); logout(); };
     $('#roleswitch').onchange = e => { const r = e.target.value; audit('a_role', t(ROLES[r])); finishLogin(r); };
   }
   if (route === 'editor') document.querySelectorAll('[data-cms]').forEach(b => b.onclick = () => toast(u('cms_demo')));
   if (route === 'review') {
     document.querySelectorAll('[data-rev]').forEach(b => b.onclick = () => toast(b.dataset.rev === 'ok' ? u('approved') : u('returned')));
-    document.querySelectorAll('[data-resolve]').forEach(b => b.onclick = () => { const r = store.get('reports', []); r.splice(+b.dataset.resolve, 1); store.set('reports', r); render(); });
+    document.querySelectorAll('[data-resolve]').forEach(b => b.onclick = () => {
+      if (SRV_REPORTS) { const it = SRV_REPORTS[+b.dataset.resolve]; tutorFetch(`/reports/${it.id}/resolve`, { method: 'POST', body: '{}' }).then(loadSrvReports); SRV_REPORTS.splice(+b.dataset.resolve, 1); render(); return; }
+      const r = store.get('reports', []); r.splice(+b.dataset.resolve, 1); store.set('reports', r); render(); });
   }
   if (route === 'admin') document.querySelectorAll('[data-setrole]').forEach(s => s.onchange = () => { audit('a_role_set', `${s.dataset.setrole} → ${t(ROLES[s.value])}`); toast(u('role_changed')); render(); });
 
@@ -302,20 +369,39 @@ function bindAuth(route) {
     const k = b.dataset.auth;
     if (k === 'guest') { LOGIN = { step: 'start' }; return; }
     e.preventDefault();
-    if (k === 'sso' || k === 'lms') { LOGIN.src = k; LOGIN.step = 'pick'; }
-    if (k === 'invite') LOGIN.step = 'invite';
-    if (k === 'back') LOGIN.step = LOGIN.step === 'mfa' ? 'pick' : LOGIN.step === 'code' ? 'invite' : 'start';
+    if (k === 'forgot' || k === 'activate') LOGIN.step = k;
+    if (k === 'back') LOGIN.step = 'start';
     if (k === 'decline') { logout(true); LOGIN.step = 'start'; location.hash = '#/home'; return; }
     render();
   });
-  document.querySelectorAll('[data-role]').forEach(b => b.onclick = () => {
-    LOGIN.role = b.dataset.role;
-    if (ROLES[LOGIN.role].mfa) { LOGIN.step = 'mfa'; render(); $('#mfa')?.focus(); }
-    else finishLogin(LOGIN.role, LOGIN.src);
-  });
+  const staffCheck = (role, src) => { LOGIN.role = role; LOGIN.src = src; if (ROLES[role].mfa) { LOGIN.step = 'mfa'; render(); $('#mfa')?.focus(); } else finishLogin(role, src); };
+  document.querySelectorAll('[data-role]').forEach(b => b.onclick = () => staffCheck(b.dataset.role, DEMO_USERS[b.dataset.role].src));
+  const lf = $('#loginf'); if (lf) lf.onsubmit = e => {
+    e.preventDefault(); if (LOGIN.locked) return;
+    const em = $('#lemail').value.trim().toLowerCase(), pw = $('#lpw').value;
+    const role = Object.keys(DEMO_USERS).find(r => DEMO_USERS[r].email === em);
+    LOGIN.email = em;
+    if (!role || !pw) {
+      LOGIN.fails = (LOGIN.fails || 0) + 1; audit('a_fail', em ? em.replace(/(.).+@/, '$1***@') : '');
+      if (LOGIN.fails >= 5) { LOGIN.locked = true; LOGIN.err = u('locked'); } else LOGIN.err = `${u('bad_login')} ${5 - LOGIN.fails}`;
+      render(); return;
+    }
+    staffCheck(role, DEMO_USERS[role].src);
+  };
   const mf = $('#mfaf'); if (mf) mf.onsubmit = e => { e.preventDefault(); if (!/^\d{6}$/.test($('#mfa').value)) { toast(u('mfa_bad')); return; } finishLogin(LOGIN.role, LOGIN.src); };
-  const inf = $('#invf'); if (inf) inf.onsubmit = e => { e.preventDefault(); const v = $('#email').value.trim(); if (!/^\S+@\S+\.\S+$/.test(v)) { toast(u('email_bad')); return; } LOGIN.email = v; LOGIN.step = 'code'; render(); $('#otp')?.focus(); };
-  const cf = $('#codef'); if (cf) cf.onsubmit = e => { e.preventDefault(); if (!/^\d{6}$/.test($('#otp').value)) { toast(u('mfa_bad')); return; } finishLogin('mentor', 'invite'); };
+  const af = $('#actf'); if (af) {
+    const inp = $('#actcode'); inp.oninput = () => { inp.value = inp.value.toUpperCase(); };
+    af.onsubmit = e => { e.preventDefault(); const v = inp.value.trim().toUpperCase();
+      const role = v === 'STUD-2026' ? 'student' : v === 'MENT-2026' ? 'mentor' : null;
+      if (!role) { toast(u('act_bad')); return; } LOGIN.actRole = role; LOGIN.step = 'setpw'; render(); $('#pw1')?.focus(); };
+  }
+  const pf = $('#pwf'); if (pf) {
+    const chk = () => { const a = $('#pw1').value, b = $('#pw2').value; const ok = [a.length >= 10, /\p{L}/u.test(a) && /\d/.test(a), a.length > 0 && a === b];
+      ok.forEach((v, i) => pf.querySelector(`[data-rule="${i}"]`).classList.toggle('ok', v)); $('#pwsave').disabled = !ok.every(Boolean); };
+    $('#pw1').oninput = chk; $('#pw2').oninput = chk;
+    pf.onsubmit = e => { e.preventDefault(); const r = LOGIN.actRole; finishLogin(r, 'code'); audit('a_activate', t(ROLES[r])); };
+  }
+  const ff = $('#fgf'); if (ff) ff.onsubmit = e => { e.preventDefault(); const v = $('#fgemail').value.trim(); if (!/^\S+@\S+\.\S+$/.test(v)) { toast(u('email_bad')); return; } audit('a_pwreset'); LOGIN.step = 'sent'; render(); };
   const cb = $('#cons'), ac = $('#accept');
-  if (cb && ac) { cb.onchange = () => ac.disabled = !cb.checked; ac.onclick = () => { store.set('consent.' + USER.id, { v: CONSENT_VERSION, at: new Date().toISOString() }); audit('a_consent', CONSENT_VERSION); goAfterLogin(); }; }
+  if (cb && ac) { cb.onchange = () => ac.disabled = !cb.checked; ac.onclick = () => { store.set('consent.' + USER.id, { v: CONSENT_VERSION, at: new Date().toISOString() }); audit('a_consent', CONSENT_VERSION); TUTOR.consentSynced = false; syncConsent(); goAfterLogin(); }; }
 }

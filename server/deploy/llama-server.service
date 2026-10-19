@@ -1,0 +1,26 @@
+# /etc/systemd/system/llama-server.service — модель AI-тьютора (только CPU, только localhost)
+[Unit]
+Description=llama.cpp server: ebook-4B-v1 (AI-тьютор e-book)
+After=network.target
+
+[Service]
+User=ebook-ai
+Group=ebook-ai
+# -t: начать с 8 и подобрать по llama-bench (16 vCPU Hyper-V — часть из них может быть гиперпотоками)
+# -np 4 -c 16384: 4 одновременных диалога по 4096 токенов. Число слотов = SLOTS в tutor.env
+ExecStart=/opt/llama.cpp/build/bin/llama-server \
+  -m /srv/data/ebook-ai/models/ebook-4B-v1-Q4_K_M.gguf \
+  -ngl 0 -t 8 -c 16384 -np 4 \
+  --jinja --reasoning off --cache-reuse 256 \
+  --host 127.0.0.1 --port 8080 --no-webui
+Restart=on-failure
+RestartSec=5
+MemoryMax=8G
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadOnlyPaths=/srv/data/ebook-ai/models
+
+[Install]
+WantedBy=multi-user.target

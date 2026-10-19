@@ -221,12 +221,55 @@ function pageCase(id, tab) {
     </article>`;
 }
 
-/* ---------- AI-тьютор (демо) ----------
-   В продакшене askTutor() отправляет запрос на сервер:
-   POST /api/tutor {caseId, history, lang} → LLM + RAG по методбазе
-   с системной инструкцией «сократический тьютор» и экспертной картой кейса. */
+/* ---------- AI-тьютор ----------
+   Живой режим: POST /api/tutor {caseId, history, lang, mode, stream:true} → модель ebook-4B-v1 (llama.cpp)
+   с картой кейса; ответ приходит потоком (text/event-stream). Если сервер тьютора недоступен
+   (страница открыта как файл, 502/404, нет сети) — откат на демо-режим: вопросы кейса c.ai[] по шагам. */
 let CHAT = uget('chat', null);
+const TUTOR = {
+  api: (typeof window !== 'undefined' && window.EBOOK_TUTOR_API) || '/api/tutor',
+  online: null,          // null — ещё не пробовали, false — сервер недоступен в этой сессии
+  ctrl: null,            // AbortController текущего ответа
+  consentSynced: false,
+  FINISH_AFTER: 5,       // после стольких реплик по кейсу предлагаем «Сформулировать решение» (модель v1 лучше держится 6–8 ходов)
+};
+const tutorLive = () => /^https?:$/.test(location.protocol) && TUTOR.online !== false;
+function tutorHeaders() {
+  /* Пока вход демонстрационный, сервер (AUTH_MODE=demo) принимает псевдоним и роль из заголовков.
+     С настоящим входом здесь будет Authorization: Bearer <токен Keycloak>. */
+  return { 'Content-Type': 'application/json', 'X-Ebook-Pseudonym': pseudOf(USER.id), 'X-Ebook-Role': USER.role };
+}
+function tutorFetch(path, opts = {}) {
+  return fetch(TUTOR.api + path, { credentials: 'same-origin', ...opts, headers: { ...tutorHeaders(), ...(opts.headers || {}) } });
+}
+function syncConsent() {
+  /* согласие из экрана входа → сервер (без него сервер не хранит диалоги и жалобы) */
+  if (TUTOR.consentSynced || !USER || !tutorLive()) return;
+  const cons = store.get('consent.' + USER.id, null);
+  if (!cons) return;
+  TUTOR.consentSynced = true;
+  fetch(TUTOR.api.replace(/\/tutor$/, '/consent'), { method: 'POST', credentials: 'same-origin', headers: tutorHeaders(), body: JSON.stringify({ version: cons.v }) }).catch(() => {});
+}
+Object.assign(UI.ru, {
+  ai_live_label: 'Ответ сгенерирован AI',
+  ai_offline: 'AI-ассистент временно недоступен — продолжаю в демо-режиме по вопросам кейса.',
+  ai_busy: 'AI-ассистент сейчас занят другими пользователями. Повторите вопрос через минуту.',
+  ai_rate: 'Слишком много вопросов подряд. Сделайте паузу и попробуйте через минуту.',
+  ai_cut: 'Ответ прервался. Попробуйте задать вопрос ещё раз.',
+  ai_wait: 'Думаю… Первый ответ по кейсу может занять до минуты.',
+  ai_denied: 'AI-ассистент недоступен для вашей роли или сессия истекла — войдите снова.',
+});
+Object.assign(UI.kz, {
+  ai_live_label: 'Жауапты AI жасады',
+  ai_offline: 'AI-көмекші уақытша қолжетімсіз — кейс сұрақтары бойынша демо-режимде жалғастырамын.',
+  ai_busy: 'AI-көмекші қазір басқа пайдаланушылармен бос емес. Сұрағыңызды бір минуттан кейін қайталаңыз.',
+  ai_rate: 'Сұрақтар тым көп. Үзіліс жасап, бір минуттан кейін көріңіз.',
+  ai_cut: 'Жауап үзілді. Сұрақты қайта қойып көріңіз.',
+  ai_wait: 'Ойланып жатырмын… Кейс бойынша алғашқы жауап бір минутқа дейін созылуы мүмкін.',
+  ai_denied: 'AI-көмекші сіздің рөліңізге қолжетімсіз немесе сессия аяқталды — қайта кіріңіз.',
+});
 function chatInit(caseId) {
+  if (TUTOR.ctrl) TUTOR.ctrl.abort();
   CHAT = { caseId: caseId || null, step: 0, msgs: [] };
   CHAT.msgs.push({ from: 'ai', kind: 'hello' });
   if (caseId) CHAT.msgs.push({ from: 'ai', kind: 'intro', step: 0 });
@@ -240,12 +283,10 @@ function redactPII(s) {
     .replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, () => (hit = true, '[e-mail скрыт]'));
   return { text: r, hit };
 }
-function askTutor(text) {
+/* Демо-ответ (без сервера): вопросы карты кейса по шагам. Вызывается после того, как реплика пользователя уже в CHAT. */
+function demoReplies(text) {
   const out = [];
   const low = text.toLowerCase();
-  const { text: clean, hit } = redactPII(text);
-  CHAT.msgs.push({ from: 'me', text: clean });
-  if (hit) out.push({ from: 'ai', kind: 'pii' });
   const wantsAnswer = /(правильн|верн|ответ|дұрыс|жауап)/.test(low);
   if (!CHAT.caseId) {
     const words = low.split(/[^\p{L}\d]+/u).filter(w => w.length > 3);
@@ -260,6 +301,82 @@ function askTutor(text) {
   }
   return out;
 }
+/* Сохраняем прежнее имя: askTutor(text) добавляет реплику и возвращает демо-ответы (используется без сервера). */
+function askTutor(text) {
+  const { text: clean, hit } = redactPII(text);
+  CHAT.msgs.push({ from: 'me', text: clean });
+  return (hit ? [{ from: 'ai', kind: 'pii' }] : []).concat(demoReplies(clean));
+}
+/* История для модели: реплики пользователя и ответы модели (демо-сообщения модель не видела — не отправляем). */
+function chatHistory(upto) {
+  return CHAT.msgs.slice(0, upto ?? CHAT.msgs.length)
+    .filter(m => m.from === 'me' || (m.kind === 'llm' && m.text && !m.pending))
+    .map(m => ({ role: m.from === 'me' ? 'user' : 'assistant', content: m.text }));
+}
+/* Ответ модели — обычный текст с редкой разметкой: экранируем, **жирный**, переносы строк, метка [AI-рекомендация]. */
+function fmtAI(s) {
+  return esc(s.trim())
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/\[(AI-рекомендация|AI-ұсыныс)\]/g, '<span class="ai-tag">$1</span>')
+    .replace(/\n/g, '<br>');
+}
+async function askTutorLive(text) {
+  const { text: clean, hit } = redactPII(text);
+  CHAT.msgs.push({ from: 'me', text: clean });
+  if (hit) CHAT.msgs.push({ from: 'ai', kind: 'pii' });
+  const m = { from: 'ai', kind: 'llm', text: '', pending: true };
+  const history = chatHistory();
+  CHAT.msgs.push(m);
+  const ctrl = TUTOR.ctrl = new AbortController();
+  CHAT.busy = true; uset('chat', CHAT); render();
+  syncConsent();
+  const chatRef = CHAT;
+  const paint = () => { const el = document.querySelector('[data-live]'); if (el && CHAT === chatRef) { el.innerHTML = fmtAI(m.text); const b = $('#msgs'); if (b) b.scrollTop = b.scrollHeight; } };
+  const fallback = (note) => {
+    chatRef.msgs.splice(chatRef.msgs.indexOf(m), 1);
+    if (note) chatRef.msgs.push({ from: 'ai', kind: 'note', text: note });
+    if (note === 'ai_offline' || !note) chatRef.msgs.push(...demoReplies(clean));
+  };
+  try {
+    const r = await tutorFetch('', { method: 'POST', signal: ctrl.signal, body: JSON.stringify({
+      caseId: CHAT.caseId, history, lang: LANG, mode: USER.role === 'teacher' ? 'teacher' : 'student', stream: true }) });
+    if (!r.ok || !r.body) {
+      if (r.status === 429) fallback('ai_rate');
+      else if (r.status === 503) fallback('ai_busy');
+      else if (r.status === 401 || r.status === 403) fallback('ai_denied');
+      else { TUTOR.online = false; fallback('ai_offline'); }   // 502 (модель упала), 404 (нет сервиса), 5xx
+      return;
+    }
+    TUTOR.online = true;
+    const reader = r.body.getReader(), dec = new TextDecoder();
+    let buf = '';
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let k;
+      while ((k = buf.indexOf('\n\n')) >= 0) {
+        const line = buf.slice(0, k).trim(); buf = buf.slice(k + 2);
+        if (!line.startsWith('data:')) continue;
+        const ev = JSON.parse(line.slice(5));
+        if (ev.delta) { m.text += ev.delta; paint(); }
+        if (ev.done) { m.label = ev.label; m.suggest = (ev.suggest || []).filter(id => caseById(id)); if (ev.pii_redacted && !hit) m.pii = true; }
+        if (ev.error) m.error = true;
+      }
+    }
+    if (!m.text) { m.error = true; }
+  } catch (e) {
+    if (e.name === 'AbortError') { const i = chatRef.msgs.indexOf(m); if (i >= 0 && !m.text) chatRef.msgs.splice(i, 1); }
+    else if (!m.text) { TUTOR.online = false; fallback('ai_offline'); }   // сеть / сервис не отвечает
+    else m.error = true;
+  } finally {
+    m.pending = false;
+    if (chatRef.caseId && m.text && chatRef.msgs.filter(x => x.from === 'me').length >= TUTOR.FINISH_AFTER) m.finish = true;
+    chatRef.busy = false;
+    if (TUTOR.ctrl === ctrl) TUTOR.ctrl = null;
+    if (CHAT === chatRef) { uset('chat', CHAT); if (location.hash.startsWith('#/ai')) { render(); $('#cinput')?.focus(); } }
+  }
+}
 function aiMsgHTML(m, i) {
   const c = CHAT.caseId ? caseById(CHAT.caseId) : null;
   let h = '';
@@ -267,15 +384,31 @@ function aiMsgHTML(m, i) {
   if (m.kind === 'pick') h = `${u('ai_pick')}<div class="quick">${CASES.map(x => `<button data-pick="${x.id}">${x.id} · ${esc(t(x.title))}</button>`).join('')}</div>`;
   if (m.kind === 'suggest') h = `${u('ai_suggest')}<div class="quick">${m.ids.map(id => `<button data-pick="${id}">${id} · ${esc(t(caseById(id).title))}</button>`).join('')}</div>`;
   if (m.kind === 'pii') h = `⚠️ ${u('ai_pii')}`;
+  if (m.kind === 'note') h = `<span class="ai-note">${u(m.text)}</span>`;
   if (c && m.kind === 'intro') h = `${u('ai_case_intro').replace('{t}', esc(t(c.title)))}<ol>${c.ai.slice(0, 1).map(q => `<li>${t(q)}</li>`).join('')}</ol>`;
   if (c && m.kind === 'ask') h = `${UI[LANG].ai_ack[m.ack]} ${t(c.ai[m.step])}`;
   if (c && m.kind === 'noanswer') h = `${u('ai_no_answer')} ${t(c.ai[m.step])}`;
-  if (c && m.kind === 'finish') h = `${u('ai_finish')}<div class="quick"><button data-go="#/case/${c.id}/solutions">${u('ai_to_solutions')}</button><button data-go="#/case/${c.id}/comment">${u('ai_to_expert')}</button></div>`;
-  const meta = (m.kind === 'hello' || m.kind === 'pick') ? '' : `<div class="meta"><span>${u('ai_label')}</span><button data-report="${i}">${m.reported ? '✓' : u('ai_report')}</button></div>`;
+  const finishBtns = c ? `<div class="quick"><button data-go="#/case/${c.id}/solutions">${u('ai_to_solutions')}</button><button data-go="#/case/${c.id}/comment">${u('ai_to_expert')}</button></div>` : '';
+  if (c && m.kind === 'finish') h = `${u('ai_finish')}${finishBtns}`;
+  if (m.kind === 'llm') {
+    const live = m.pending ? ' data-live' : '';
+    h = m.text ? `<div${live}>${fmtAI(m.text)}</div>`
+      : `<div${live}><div class="typing"><i></i><i></i><i></i></div><small class="muted">${u('ai_wait')}</small></div>`;
+    if (m.pii) h = `<p class="ai-note">⚠️ ${u('ai_pii')}</p>` + h;
+    if (m.error) h += `<p class="ai-note">${u('ai_cut')}</p>`;
+    if (m.suggest && m.suggest.length) h += `<div class="quick">${m.suggest.map(id => `<button data-pick="${id}">${id} · ${esc(t(caseById(id).title))}</button>`).join('')}</div>`;
+    if (m.finish) h += `<p style="margin:10px 0 0">${u('ai_finish')}</p>${finishBtns}`;
+  }
+  const noMeta = m.kind === 'hello' || m.kind === 'pick' || m.kind === 'note' || m.pending || (m.kind === 'intro' && tutorLive());  // вступление — текст карты, не ответ модели
+  const label = m.kind === 'llm' ? (m.label || u('ai_live_label')) : u('ai_label');
+  const meta = noMeta ? '' : `<div class="meta"><span>${esc(label)}</span><button data-report="${i}">${m.reported ? '✓' : u('ai_report')}</button></div>`;
   return `<div class="msg"><div class="bot">${ic('bot')}</div><div class="bubble">${h}${meta}</div></div>`;
 }
 function pageAI(caseId) {
   if (!CHAT || (caseId && CHAT.caseId !== caseId)) chatInit(caseId);
+  if (CHAT.busy && !TUTOR.ctrl) {  // страницу перезагрузили посреди ответа: убираем незавершённое
+    CHAT.busy = false; CHAT.msgs = CHAT.msgs.filter(m => !(m.pending && !m.text)); CHAT.msgs.forEach(m => { m.pending = false; });
+  }
   const c = CHAT.caseId ? caseById(CHAT.caseId) : null;
   return `<div class="chat-wrap">
     <aside class="chat-side">
@@ -352,8 +485,21 @@ function pageTeacher() {
         <table><tr><th>${u('teach_student')}</th><th>${u('teach_status')}</th><th>${u('teach_choice')}</th><th>${u('teach_score')}</th></tr>
         ${demo.map(([n, s, ch, sc]) => `<tr><td>${n}</td><td><span class="chip ${st[s][1]}">${u(st[s][0])}</span></td><td>${ch === null ? '—' : ch === 'own' ? u('own') : 'ABC'[ch]}</td><td>${sc ?? '—'}</td></tr>`).join('')}</table>
         <button class="btn btn-l" style="margin-top:14px" id="tcsv">${ic('download')} ${u('export_csv')}</button></div>
+    </div>
+    <div class="card pad" style="margin-top:16px">
+      <div class="page-head"><h3 style="margin:0">${u('acc_title')} · ${(USER.groups || [])[0] || ''}</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-o btn-sm" id="accimp">${ic('download')} ${u('acc_import')}</button><button class="btn btn-p btn-sm" id="acccodes">${u('acc_codes')}</button></div></div>
+      <p class="note-line">${ic('users')} ${u('acc_note')}</p>
+      <div class="tscroll"><table><tr><th>${u('teach_student')}</th><th>E-mail</th><th>${u('teach_status')}</th><th>${u('acc_code_col')}</th><th></th></tr>
+      ${demoAccounts().map((a, i) => `<tr><td>${a.name}</td><td>${a.email || '—'}</td><td><span class="chip ${a.on ? 'oc-good' : 'oc-risky'}">${a.on ? u('acc_on') : u('acc_wait')}</span></td>
+        <td>${!a.on && window._codes ? `<code>${actCode(i)}</code>` : '—'}</td><td style="text-align:right"><button class="btn btn-o btn-sm" data-newcode="${i}">${u('acc_reset')}</button></td></tr>`).join('')}</table></div>
     </div>`;
 }
+const demoAccounts = () => [
+  { name: 'Студент 01', email: 's01@example.kz', on: true }, { name: 'Студент 02', email: '', on: true },
+  { name: 'Студент 03', email: 's03@example.kz', on: false }, { name: 'Студент 04', email: '', on: true }, { name: 'Студент 05', email: '', on: false },
+];
+const actCode = (i) => { const L = 'ABCDEFGHJKLMNPRSTUVWXYZ'; const n = (i + 3) * 7919 + (window._codes || 0) * 104729; return [0, 1, 2, 3].map(k => L.charAt((n >> (k * 3)) % L.length)).join('') + '-' + String(1000 + (n % 9000)).slice(-4); };
 
 function pageAbout() {
   const accessIcons = ['monitor', 'qr', 'doc', 'cap', 'users'];
@@ -458,22 +604,33 @@ function bind(route, a) {
       const p = e.target.closest('[data-pick]'); if (p) { location.hash = '#/ai/' + p.dataset.pick; return; }
       const g = e.target.closest('[data-go]'); if (g) { location.hash = g.dataset.go; return; }
       const r = e.target.closest('[data-report]'); if (r) {
-        const m = CHAT.msgs[+r.dataset.report]; if (m.reported) return; m.reported = true; uset('chat', CHAT);
-        const txt = (r.closest('.bubble')?.firstChild?.textContent || '').trim().slice(0, 140);
-        const q = store.get('reports', []); q.unshift({ caseId: CHAT.caseId, who: pseudOf(USER.id), text: txt, at: new Date().toISOString() }); store.set('reports', q.slice(0, 30));
+        const idx = +r.dataset.report, m = CHAT.msgs[idx]; if (m.reported) return; m.reported = true; uset('chat', CHAT);
+        const txt = (m.kind === 'llm' ? m.text : (r.closest('.bubble')?.firstChild?.textContent || '')).trim();
+        const local = () => { const q = store.get('reports', []); q.unshift({ caseId: CHAT.caseId, who: pseudOf(USER.id), text: txt.slice(0, 140), at: new Date().toISOString() }); store.set('reports', q.slice(0, 30)); };
+        if (m.kind === 'llm' && tutorLive()) {
+          /* пара «контекст → ответ» уходит эксперту на сервер — это данные для следующего дообучения */
+          tutorFetch('/report', { method: 'POST', body: JSON.stringify({ caseId: CHAT.caseId, lang: LANG, history: chatHistory(idx), reply: m.text }) })
+            .then(x => { if (!x.ok) local(); }).catch(local);
+        } else local();
         audit('a_report', CHAT.caseId || ''); toast(u('ai_reported')); render(); }
     };
     $('#compose').onsubmit = e => {
-      e.preventDefault(); const inp = $('#cinput'); const v = inp.value.trim(); if (!v) return;
+      e.preventDefault(); const inp = $('#cinput'); const v = inp.value.trim(); if (!v || CHAT.busy) return;
+      inp.value = '';
+      if (tutorLive()) { askTutorLive(v); return; }
       const replies = askTutor(v); uset('chat', CHAT); render();
       const b2 = $('#msgs'); b2.insertAdjacentHTML('beforeend', `<div class="msg" id="typing"><div class="bot">${ic('bot')}</div><div class="bubble"><div class="typing"><i></i><i></i><i></i></div></div></div>`); b2.scrollTop = b2.scrollHeight;
       setTimeout(() => { CHAT.msgs.push(...replies); uset('chat', CHAT); render(); $('#cinput')?.focus(); }, 700);
     };
+    if (CHAT.busy) { const ci = $('#cinput'); if (ci) ci.disabled = true; }
   }
 
   if (route === 'profile' && USER) $('#csv').onclick = () => audit('a_export', 'portfolio') || downloadCSV('portfolio.csv', [['case', 'title', 'choice', 'own', 'justification', 'principles', 'date'],
     ...portfolio().map(({ c, d }) => [c.id, t(c.title), d.choice === 'own' ? 'own' : 'ABC'[d.choice], d.own, d.just, (d.pr || []).map(p => t(PRINCIPLES.find(x => x.id === p))).join(', '), d.at])]);
   if (route === 'teacher' && can('teacher')) {
+    $('#accimp').onclick = () => { audit('a_import', (USER.groups || [])[0]); toast(u('acc_imported')); };
+    $('#acccodes').onclick = () => { window._codes = (window._codes || 0) + 1; audit('a_codes', (USER.groups || [])[0]); toast(u('acc_codes_done')); keepScroll(render); };
+    document.querySelectorAll('[data-newcode]').forEach(b => b.onclick = () => { window._codes = (window._codes || 0) + 1; audit('a_reset', 'Студент ' + String(+b.dataset.newcode + 1).padStart(2, '0')); toast(u('acc_codes_done')); keepScroll(render); });
     $('#assign').onclick = () => { audit('a_assign', CASES.filter((x, i) => document.querySelectorAll('.checkrow input')[i]?.checked).map(x => x.id).join(', ')); toast(u('teach_done')); };
     $('#tcsv').onclick = () => audit('a_export', 'group-results') || downloadCSV('group-results-demo.csv', [['student', 'status', 'choice', 'score'], ['Студент 01', 'done', 'B', 92], ['Студент 02', 'done', 'A', 74], ['Студент 03', 'progress', '', ''], ['Студент 04', 'done', 'own', 88], ['Студент 05', 'none', '', '']]);
   }

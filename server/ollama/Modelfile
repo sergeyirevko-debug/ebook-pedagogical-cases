@@ -1,0 +1,25 @@
+# Модель AI-тьютора для Ollama. Создаётся скриптом server\run_local_ollama.ps1 (подставляет путь к GGUF вместо __GGUF__):
+#   ollama create ebook-4b -f <этот файл>
+# TEMPLATE повторяет chat_template.jinja модели (Qwen3.5) для случая без инструментов и без рассуждений
+# (enable_thinking=false → пустой блок <think></think> в начале ответа). Менять нельзя — так модель обучена.
+FROM __GGUF__
+
+TEMPLATE """{{- range .Messages }}<|im_start|>{{ .Role }}
+{{ .Content }}<|im_end|>
+{{ end }}<|im_start|>assistant
+<think>
+
+</think>
+
+"""
+
+# параметры, с которыми модель тестировалась (docs/INTEGRATION.md комплекта, п. 3)
+PARAMETER temperature 0.6
+PARAMETER top_p 0.8
+PARAMETER top_k 20
+PARAMETER presence_penalty 1.0
+PARAMETER num_predict 400
+# системный промпт + карта кейса ~1.8 тыс. токенов, история до ~3.5 тыс.
+PARAMETER num_ctx 8192
+PARAMETER stop <|im_end|>
+PARAMETER stop <|endoftext|>

@@ -1,0 +1,23 @@
+# /etc/systemd/system/ebook-tutor.service — сервис /api/tutor (между nginx и llama-server)
+[Unit]
+Description=E-book AI tutor API (/api/tutor)
+After=network.target llama-server.service
+Wants=llama-server.service
+
+[Service]
+User=ebook-ai
+Group=ebook-ai
+WorkingDirectory=/opt/ebook-ai/server
+EnvironmentFile=/etc/ebook/tutor.env
+ExecStart=/usr/bin/python3 -m tutor.app
+Restart=on-failure
+RestartSec=3
+MemoryMax=1G
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/srv/data/ebook-ai/db
+
+[Install]
+WantedBy=multi-user.target
